@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>OBE's — Shop Online</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:#F0EAE2;
+  color:#1C1410;
+  padding:32px 12px 60px;
+  min-height:100vh;
+}
+
+/* ── ROOT TOKENS ── */
+#ob-root{
+  --ink:       #1C1410;
+  --ink2:      #5C4A3A;
+  --sand:      #F0EAE2;
+  --cream:     #FAF7F3;
+  --warm:      #F5EFE6;
+  --line:      rgba(92,74,58,0.14);
+  --accent:    #A0522D;   /* sienna — warm terracotta */
+  --accent2:   #7A3B1E;   /* darker sienna */
+  --green:     #4A7C59;
+  --green-l:   #EAF2EC;
+  --red:       #B03030;
+  --gold:      #C49A3C;
+  --mono:      'DM Mono', monospace;
+  --serif:     'Cormorant Garamond', Georgia, serif;
+}
+#ob-root{
+  font-family:'DM Sans',sans-serif;
+  color:var(--ink);
+  background:var(--cream);
+  border-radius:24px;
+  max-width:1000px;
+  margin:0 auto;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 20px 60px rgba(92,74,58,.18);
+}
+
+/* ── HEADER ── */
+.ob-header{
+  background:var(--ink);
+  padding:36px 28px 32px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.ob-header::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at 30% 60%, rgba(160,82,45,.25) 0%, transparent 60%),
+             radial-gradient(ellipse at 75% 30%, rgba(196,154,60,.15) 0%, transparent 55%);
+  pointer-events:none;
+}
+.ob-eyebrow{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  display:block;
+  margin-bottom:12px;
+  position:relative;
+}
+.ob-logo{
+  font-family:var(--serif);
+  font-size:48px;
+  font-weight:500;
+  color:#FAF7F3;
+  line-height:1;
+  letter-spacing:-.01em;
+  position:relative;
+}
+.ob-logo em{color:var(--gold);font-style:italic}
+.ob-tagline{
+  font-size:13px;
+  color:rgba(250,247,243,.55);
+  margin-top:10px;
+  letter-spacing:.03em;
+  position:relative;
+}
+.ob-header-menu{position:absolute;top:16px;right:16px;z-index:10}
+.ob-menu-dot{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  color:rgba(250,247,243,.7);border-radius:8px;padding:7px 10px;
+  font-size:18px;cursor:pointer;line-height:1;transition:all .15s;
+}
+.ob-menu-dot:hover{background:rgba(255,255,255,.18);color:#FAF7F3}
+.ob-menu-pop{
+  position:absolute;top:40px;right:0;background:var(--cream);
+  border:1.5px solid var(--line);border-radius:14px;
+  box-shadow:0 12px 32px rgba(28,20,16,.18);min-width:200px;
+  display:none;overflow:hidden;text-align:left;
+}
+.ob-menu-pop.show{display:block}
+.ob-menu-pop button{
+  display:flex;align-items:center;gap:10px;width:100%;background:none;
+  border:none;padding:12px 16px;font-size:13px;cursor:pointer;
+  color:var(--ink);font-family:'DM Sans',sans-serif;text-align:left;
+  transition:background .12s;
+}
+.ob-menu-pop button:hover{background:var(--warm)}
+.ob-menu-pop hr{border:none;border-top:1px solid var(--line);margin:4px 0}
+
+/* ── BODY PADDING ── */
+.ob-body{padding:0 20px 40px}
+
+/* ── STATUS / LOADING ── */
+.ob-status{
+  text-align:center;padding:48px 0;font-size:14px;
+  color:var(--ink2);letter-spacing:.02em;
+}
+.ob-status-dot{
+  display:inline-block;width:8px;height:8px;border-radius:50%;
+  background:var(--accent);margin-right:8px;
+  animation:pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ── CATEGORY FILTER ── */
+.ob-filter-row{
+  display:flex;gap:8px;overflow-x:auto;padding:20px 0 16px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.ob-filter-row::-webkit-scrollbar{display:none}
+.ob-filter-btn{
+  flex-shrink:0;border:1.5px solid var(--line);background:var(--cream);
+  border-radius:100px;padding:7px 18px;font-size:12px;font-weight:500;
+  cursor:pointer;transition:all .15s;color:var(--ink2);
+  font-family:'DM Sans',sans-serif;white-space:nowrap;
+}
+.ob-filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ob-filter-btn.active{
+  background:var(--ink);border-color:var(--ink);color:var(--cream);
+}
+
+/* ── PRODUCT GRID ── */
+.ob-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(185px,1fr));
+  gap:16px;
+}
+.ob-card{
+  background:var(--cream);border:1.5px solid var(--line);
+  border-radius:18px;overflow:hidden;display:flex;
+  flex-direction:column;transition:all .2s;cursor:pointer;
+}
+.ob-card:hover{
+  box-shadow:0 10px 30px rgba(92,74,58,.14);
+  transform:translateY(-2px);
+}
+.ob-card-img-wrap{
+  width:100%;height:190px;
+  background:linear-gradient(145deg,#F5EFE6 0%,#EDE4D8 100%);
+  overflow:hidden;position:relative;
+}
+.ob-card-img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .35s ease;display:block;
+}
+.ob-card:hover .ob-card-img{transform:scale(1.06)}
+.ob-card-img-placeholder{
+  width:100%;height:100%;display:flex;align-items:center;
+  justify-content:center;font-size:40px;opacity:.3;
+}
+.ob-card-body{padding:14px 14px 16px;display:flex;flex-direction:column;gap:5px;flex:1}
+.ob-card-cat{
+  font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--accent);
+}
+.ob-card-name{
+  font-family:var(--serif);font-size:17px;color:var(--ink);
+  line-height:1.25;font-weight:500;
+}
+.ob-card-desc{font-size:11.5px;color:var(--ink2);line-height:1.55;margin-top:2px}
+.ob-card-price{
+  font-family:var(--mono);font-size:13px;color:var(--accent);
+  font-weight:500;margin-top:auto;padding-top:8px;
+}
+.ob-card-btn{
+  margin-top:10px;background:var(--ink);color:var(--cream);
+  border:none;border-radius:100px;padding:10px 0;font-weight:600;
+  font-size:12px;cursor:pointer;transition:background .15s;
+  font-family:'DM Sans',sans-serif;letter-spacing:.02em;
+}
+.ob-card-btn:hover{background:var(--accent)}
+
+/* ── FAB ── */
+.ob-fab{
+  position:fixed;right:16px;bottom:20px;z-index:9000;
+  background:var(--ink);color:var(--cream);border:none;
+  border-radius:100px;padding:14px 22px;
+  font-family:var(--mono);font-size:13px;font-weight:500;
+  cursor:pointer;box-shadow:0 12px 32px rgba(28,20,16,.4);
+  display:none;align-items:center;gap:10px;
+  transition:transform .15s,background .15s;
+}
+.ob-fab:hover{background:var(--accent);transform:scale(1.03)}
+.ob-fab.show{display:flex}
+
+/* ── OVERLAY ── */
+.ob-overlay{
+  position:fixed;inset:0;background:rgba(28,20,16,.55);
+  z-index:9500;display:none;backdrop-filter:blur(2px);
+}
+.ob-overlay.show{display:block}
+
+/* ── PANELS ── */
+.ob-panel{
+  position:fixed;right:0;top:0;height:100vh;height:100dvh;
+  width:min(400px,100vw);background:var(--cream);z-index:9600;
+  transform:translateX(110%);transition:transform .28s cubic-bezier(.32,.72,0,1);
+  box-shadow:-16px 0 48px rgba(28,20,16,.22);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.ob-panel.show{transform:translateX(0)}
+.ob-panel-head{
+  padding:18px 18px 14px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:10px;background:var(--cream);flex-shrink:0;
+}
+.ob-panel-head h2{
+  font-family:var(--serif);font-size:22px;color:var(--ink);flex:1;font-weight:500;
+}
+.ob-back-btn,.ob-close-btn{
+  background:none;border:none;cursor:pointer;font-size:18px;
+  color:var(--ink2);padding:4px 6px;border-radius:6px;line-height:1;transition:color .12s;
+}
+.ob-back-btn:hover,.ob-close-btn:hover{color:var(--ink)}
+.ob-panel-body{padding:16px 18px 30px;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.ob-panel-footer{
+  padding:14px 18px 20px;border-top:1px solid var(--line);
+  background:var(--cream);flex-shrink:0;
+}
+
+/* ── PRODUCT MODAL ── */
+.ob-prod-modal{
+  position:fixed;inset:0;z-index:10000;display:none;
+  align-items:flex-end;justify-content:center;
+}
+.ob-prod-modal.show{display:flex}
+.ob-prod-backdrop{position:absolute;inset:0;background:rgba(28,20,16,.55);backdrop-filter:blur(2px)}
+.ob-prod-sheet{
+  position:relative;background:var(--cream);
+  border-radius:24px 24px 0 0;width:min(440px,100vw);
+  max-height:90vh;max-height:90dvh;overflow:hidden;
+  box-shadow:0 -16px 48px rgba(28,20,16,.25);
+  display:flex;flex-direction:column;
+}
+/* gallery */
+.ob-gallery{flex-shrink:0;position:relative}
+.ob-gallery-main{
+  width:100%;height:220px;
+  background:linear-gradient(145deg,#F5EFE6,#EDE4D8);
+  overflow:hidden;border-radius:24px 24px 0 0;
+}
+.ob-gallery-main img{width:100%;height:100%;object-fit:cover;display:block}
+.ob-gallery-thumbs{
+  display:flex;gap:6px;padding:10px 20px 0;overflow-x:auto;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.ob-gallery-thumbs::-webkit-scrollbar{display:none}
+.ob-thumb{
+  width:48px;height:48px;flex-shrink:0;border-radius:8px;overflow:hidden;
+  border:2px solid transparent;cursor:pointer;opacity:.55;transition:all .15s;
+  background:var(--warm);
+}
+.ob-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.ob-thumb.active{border-color:var(--accent);opacity:1}
+.ob-thumb:hover{opacity:1}
+/* modal scroll */
+.ob-modal-scroll{overflow-y:auto;flex:1;min-height:0;padding-bottom:8px}
+.ob-prod-info{padding:18px 20px 0}
+.ob-prod-info h3{font-family:var(--serif);font-size:24px;color:var(--ink);font-weight:500;line-height:1.2}
+.ob-prod-price{font-family:var(--mono);color:var(--accent);font-size:16px;font-weight:500;margin-top:6px}
+.ob-prod-desc{font-size:13px;color:var(--ink2);margin-top:8px;line-height:1.65}
+
+/* options sections */
+.ob-section{padding:16px 20px 0}
+.ob-section-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink2);margin-bottom:10px;
+}
+.ob-pills{display:flex;gap:8px;flex-wrap:wrap}
+.ob-pill{
+  border:1.5px solid var(--line);background:var(--cream);
+  border-radius:100px;padding:8px 18px;font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .15s;color:var(--ink2);
+  font-family:'DM Sans',sans-serif;
+}
+.ob-pill:hover{border-color:var(--accent);color:var(--accent)}
+.ob-pill.sel{border-color:var(--ink);background:var(--ink);color:var(--cream)}
+.ob-text-input{
+  width:100%;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;font-size:13px;font-family:'DM Sans',sans-serif;
+  background:var(--cream);color:var(--ink);outline:none;transition:border .15s;
+}
+.ob-text-input:focus{border-color:var(--accent)}
+.ob-slider-row{display:flex;align-items:center;gap:12px}
+.ob-slider-row input[type=range]{flex:1;accent-color:var(--accent);cursor:pointer}
+.ob-slider-val{font-family:var(--mono);font-size:12px;color:var(--accent);min-width:36px;text-align:right}
+/* qty */
+.ob-qty-row{display:flex;align-items:center;gap:14px;justify-content:center;margin-top:4px}
+.ob-qty-btn{
+  width:36px;height:36px;border-radius:50%;border:1.5px solid var(--line);
+  background:var(--cream);cursor:pointer;font-size:18px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.ob-qty-btn:hover{border-color:var(--ink);color:var(--ink)}
+.ob-qty-num{font-family:var(--mono);font-size:18px;font-weight:500;min-width:28px;text-align:center}
+/* modal footer */
+.ob-modal-footer{
+  background:var(--cream);padding:14px 20px calc(14px + env(safe-area-inset-bottom));
+  box-shadow:0 -8px 20px rgba(28,20,16,.08);flex-shrink:0;
+}
+.ob-modal-atc{
+  width:100%;background:var(--ink);color:var(--cream);border:none;
+  border-radius:14px;padding:16px 0;font-size:15px;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;
+}
+.ob-modal-atc:hover{background:var(--accent)}
+
+/* ── CART ── */
+.ob-cart-item{display:flex;align-items:flex-start;gap:10px;padding:13px 0;border-bottom:1px dashed var(--line)}
+.ob-ci-info{flex:1;min-width:0}
+.ob-ci-name{font-family:var(--serif);font-size:15px;color:var(--ink);font-weight:500}
+.ob-ci-sub{font-size:11px;color:var(--ink2);margin-top:3px;line-height:1.5}
+.ob-ci-price{font-family:var(--mono);font-size:12px;color:var(--accent);margin-top:3px}
+.ob-ci-total{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--accent);white-space:nowrap;margin-top:2px}
+.ob-cart-qty{display:flex;align-items:center;gap:6px;margin-top:8px}
+.ob-cart-qty button{
+  width:24px;height:24px;border-radius:50%;border:1px solid var(--line);
+  background:var(--cream);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:border .12s;
+}
+.ob-cart-qty button:hover{border-color:var(--accent)}
+.ob-cart-qty span{font-family:var(--mono);font-size:13px;font-weight:500;min-width:20px;text-align:center}
+.ob-empty-cart{text-align:center;padding:40px 0;font-size:13px;color:var(--ink2)}
+.ob-empty-cart .ob-ec-icon{font-size:40px;margin-bottom:12px;opacity:.4}
+.ob-summary-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:var(--ink2)}
+.ob-summary-row.total{font-size:15px;font-weight:700;color:var(--ink);padding-top:10px;border-top:1.5px solid var(--line);margin-top:6px}
+.ob-summary-row.total span:last-child{color:var(--accent);font-family:var(--mono)}
+.ob-topup{
+  border-radius:10px;padding:10px 12px;font-size:12px;margin-top:10px;
+  background:#FFF8E6;border:1px solid var(--gold);color:#7A5C00;
+}
+.ob-topup.free{background:var(--green-l);border-color:var(--green);color:#2D5A3D}
+
+/* ── FORM FIELDS ── */
+.ob-field{margin-bottom:14px}
+.ob-field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:6px}
+.ob-field input,.ob-field textarea,.ob-field select{
+  width:100%;padding:10px 13px;border:1.5px solid var(--line);
+  border-radius:10px;font-size:13px;font-family:'DM Sans',sans-serif;
+  background:var(--cream);color:var(--ink);outline:none;transition:border .15s;
+}
+.ob-field input:focus,.ob-field textarea:focus{border-color:var(--accent)}
+.ob-radio-group{display:flex;flex-direction:column;gap:8px}
+.ob-radio-opt{
+  display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);
+  border-radius:10px;padding:11px 13px;cursor:pointer;transition:border .15s;
+  background:var(--cream);
+}
+.ob-radio-opt.sel{border-color:var(--ink);background:var(--warm)}
+.ob-radio-opt input{accent-color:var(--accent)}
+.ob-radio-opt-info{flex:1}
+.ob-radio-opt-title{font-size:13px;font-weight:600;color:var(--ink)}
+.ob-radio-opt-sub{font-size:11px;color:var(--ink2)}
+.ob-badge{font-size:9px;background:var(--ink);color:var(--cream);border-radius:100px;padding:2px 7px;margin-left:6px;font-family:var(--mono);letter-spacing:.06em}
+.ob-steps{display:flex;gap:0;margin-bottom:20px}
+.ob-step{flex:1;text-align:center;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);padding-bottom:8px;border-bottom:2px solid var(--line);transition:all .2s}
+.ob-step.active{color:var(--accent);border-bottom-color:var(--accent)}
+.ob-step.done{color:var(--green);border-bottom-color:var(--green)}
+.ob-error{color:var(--red);font-size:11.5px;margin-top:5px}
+.ob-div{border:none;border-top:1px dashed var(--line);margin:16px 0}
+
+/* ── BUTTONS ── */
+.ob-btn-primary{
+  width:100%;background:var(--ink);color:var(--cream);border:none;
+  border-radius:12px;padding:14px 0;font-size:14px;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;margin-top:8px;
+}
+.ob-btn-primary:hover{background:var(--accent)}
+.ob-btn-primary:disabled{background:#C0B4A8;cursor:not-allowed}
+.ob-btn-ghost{
+  width:100%;background:transparent;color:var(--ink2);
+  border:1.5px solid var(--line);border-radius:12px;padding:12px 0;
+  font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:all .15s;margin-top:6px;
+}
+.ob-btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── PAYMENT SCREEN ── */
+.ob-success-banner{
+  background:var(--green-l);border:1.5px solid var(--green);
+  border-radius:14px;padding:16px;text-align:center;margin-bottom:16px;
+}
+.ob-success-banner .ob-sb-icon{font-size:32px;margin-bottom:6px}
+.ob-success-banner h3{font-family:var(--serif);font-size:18px;color:#1A4D2E;font-weight:500}
+.ob-success-banner p{font-size:12px;color:#2D6A4F;margin-top:4px}
+.ob-success-banner .ob-sb-track{
+  font-family:var(--mono);font-weight:500;font-size:13px;color:var(--ink);
+  background:var(--cream);border-radius:8px;padding:6px 14px;
+  display:inline-block;margin-top:10px;border:1px solid var(--green);letter-spacing:.05em;
+}
+.ob-gcash-screen{text-align:center;padding:4px 0}
+.ob-gcash-num{font-family:var(--mono);font-size:24px;font-weight:500;color:var(--ink);letter-spacing:.08em;margin:8px 0 2px}
+.ob-gcash-name{font-size:13px;color:var(--ink2);margin-bottom:16px}
+.ob-gcash-amount{background:var(--warm);border-radius:12px;padding:14px;margin-bottom:16px;border:1px solid var(--line)}
+.ob-gcash-amount .ob-ga-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2)}
+.ob-gcash-amount .ob-ga-val{font-family:var(--mono);font-size:24px;font-weight:500;color:var(--accent);margin-top:4px}
+.ob-note-box{background:var(--warm);border:1px solid var(--line);border-radius:10px;padding:13px 14px;margin-bottom:14px}
+.ob-note-box h4{font-family:var(--serif);font-size:15px;color:var(--ink);margin-bottom:6px;font-weight:500}
+.ob-note-box p{font-size:12px;color:var(--ink2);line-height:1.75}
+.ob-copy-row{display:flex;align-items:center;justify-content:center;gap:10px;margin:8px 0 4px}
+.ob-copy-btn{
+  background:var(--cream);border:1.5px solid var(--accent);color:var(--accent);
+  border-radius:8px;padding:6px 16px;font-size:12px;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;
+}
+.ob-copy-btn:hover{background:var(--accent);color:var(--cream)}
+.ob-copy-btn.copied{background:var(--green);border-color:var(--green);color:var(--cream)}
+.ob-messenger-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+  background:#0084FF;color:#fff;border:none;border-radius:12px;padding:14px 0;
+  font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;
+  font-family:'DM Sans',sans-serif;transition:background .15s;margin-top:6px;
+}
+.ob-messenger-btn:hover{background:#006fd6}
+
+/* ── TRACK PANEL ── */
+.ob-timeline{display:flex;justify-content:space-between;margin:18px 0 22px;position:relative}
+.ob-timeline::before{content:'';position:absolute;top:13px;left:6%;right:6%;height:2px;background:var(--line);z-index:0}
+.ob-tl-step{flex:1;text-align:center;position:relative;z-index:1}
+.ob-tl-dot{width:26px;height:26px;border-radius:50%;background:var(--cream);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-size:12px;color:var(--ink2);transition:all .2s}
+.ob-tl-step.done .ob-tl-dot{background:var(--green);border-color:var(--green);color:#fff}
+.ob-tl-step.active .ob-tl-dot{background:var(--accent);border-color:var(--accent);color:#fff}
+.ob-tl-label{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.ob-tl-step.done .ob-tl-label,.ob-tl-step.active .ob-tl-label{color:var(--ink);font-weight:500}
+.ob-track-card{background:var(--warm);border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid var(--line)}
+.ob-track-card .ob-tc-no{font-family:var(--mono);font-weight:500;color:var(--accent);font-size:13px;margin-bottom:6px;letter-spacing:.04em}
+.ob-track-card .ob-tc-items{font-size:12px;color:var(--ink2);line-height:1.65}
+
+/* ── RESPONSIVE ── */
+@media(max-width:480px){
+  .ob-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .ob-card-img-wrap{height:155px}
+  .ob-gallery-main{height:200px}
+  .ob-logo{font-size:38px}
+}
+</style>
+</head>
+<body>
+<div id="ob-root">
+
+  <!-- HEADER -->
+  <div class="ob-header">
+    <div class="ob-header-menu">
+      <button class="ob-menu-dot" id="ob-menu-dot">⋮</button>
+      <div class="ob-menu-pop" id="ob-menu-pop">
+        <button id="ob-track-open">🔍 Track My Order</button>
+        <hr>
+        <button id="ob-menu-messenger">💬 Message Us</button>
+      </div>
+    </div>
+    <span class="ob-eyebrow">Handcrafted with love · Shop Online</span>
+    <div class="ob-logo"><em>OBE's</em></div>
+    <div class="ob-tagline">Soap · Jewelry · Candles & more · GCash or Cash</div>
+  </div>
+
+  <!-- BODY -->
+  <div class="ob-body">
+    <div id="ob-status" class="ob-status">
+      <span class="ob-status-dot"></span>Loading the shop…
+    </div>
+    <div id="ob-filter-row" class="ob-filter-row" style="display:none"></div>
+    <div id="ob-grid" class="ob-grid"></div>
+  </div>
+
+  <!-- FAB -->
+  <button id="ob-fab" class="ob-fab">
+    🛍️ <span id="ob-fab-text">0 items</span>
+  </button>
+
+  <!-- OVERLAY -->
+  <div id="ob-overlay" class="ob-overlay"></div>
+
+  <!-- PRODUCT MODAL -->
+  <div id="ob-modal" class="ob-prod-modal">
+    <div class="ob-prod-backdrop" id="ob-modal-backdrop"></div>
+    <div class="ob-prod-sheet">
+      <div class="ob-gallery">
+        <div class="ob-gallery-main">
+          <img id="ob-m-img" src="" alt="">
+        </div>
+        <div class="ob-gallery-thumbs" id="ob-m-thumbs"></div>
+      </div>
+      <div class="ob-modal-scroll">
+        <div class="ob-prod-info">
+          <h3 id="ob-m-name"></h3>
+          <div class="ob-prod-price" id="ob-m-price"></div>
+          <p class="ob-prod-desc" id="ob-m-desc"></p>
+        </div>
+        <div id="ob-m-options"></div>
+        <div class="ob-section">
+          <div class="ob-section-label">Quantity</div>
+          <div class="ob-qty-row">
+            <button class="ob-qty-btn" id="ob-m-minus">−</button>
+            <span class="ob-qty-num" id="ob-m-qty">1</span>
+            <button class="ob-qty-btn" id="ob-m-plus">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="ob-modal-footer">
+        <button class="ob-modal-atc" id="ob-modal-atc">
+          Add to Cart — <span id="ob-m-total">₱0</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CART PANEL -->
+  <div id="ob-cart-panel" class="ob-panel">
+    <div class="ob-panel-head">
+      <h2>Your Cart 🛍️</h2>
+      <button class="ob-close-btn" id="ob-cart-close">✕</button>
+    </div>
+    <div class="ob-panel-body">
+      <div id="ob-cart-lines"></div>
+      <hr class="ob-div">
+      <div id="ob-order-summary"></div>
+      <div id="ob-topup-notice"></div>
+    </div>
+    <div class="ob-panel-footer">
+      <button class="ob-btn-primary" id="ob-checkout-btn">Review & Checkout →</button>
+    </div>
+  </div>
+
+  <!-- CHECKOUT PANEL -->
+  <div id="ob-checkout-panel" class="ob-panel">
+    <div class="ob-panel-head">
+      <button class="ob-back-btn" id="ob-checkout-back">←</button>
+      <h2>Your Details</h2>
+      <button class="ob-close-btn" id="ob-checkout-close">✕</button>
+    </div>
+    <div class="ob-panel-body">
+      <div class="ob-steps">
+        <div class="ob-step done" id="ob-step1">Cart</div>
+        <div class="ob-step active" id="ob-step2">Details</div>
+        <div class="ob-step" id="ob-step3">Payment</div>
+      </div>
+      <div class="ob-field" style="display:flex;gap:10px">
+        <div style="flex:1"><label>First Name</label><input id="ob-fname" type="text" placeholder="Maria"></div>
+        <div style="flex:1"><label>Last Name</label><input id="ob-lname" type="text" placeholder="Santos"></div>
+      </div>
+      <div class="ob-error" id="ob-name-error" style="margin-top:-10px;margin-bottom:10px"></div>
+      <div class="ob-field">
+        <label>Contact Number</label>
+        <input id="ob-contact" type="tel" placeholder="09XX XXX XXXX">
+        <div style="font-size:11px;color:var(--ink2);margin-top:4px">GCash / Maya number you'll use to pay</div>
+        <div class="ob-error" id="ob-contact-error"></div>
+      </div>
+      <div class="ob-field">
+        <label>Delivery Address</label>
+        <textarea id="ob-address" rows="2" placeholder="House no., street, barangay, city"></textarea>
+        <div class="ob-error" id="ob-address-error"></div>
+      </div>
+      <div class="ob-field">
+        <label>Delivery Option</label>
+        <div class="ob-radio-group" id="ob-delivery-opts">
+          <label class="ob-radio-opt sel">
+            <input type="radio" name="ob-delivery" value="Standard Delivery" checked>
+            <div class="ob-radio-opt-info">
+              <div class="ob-radio-opt-title">Standard Delivery <span class="ob-badge">DEFAULT</span></div>
+              <div class="ob-radio-opt-sub">Estimated 1–3 days</div>
+            </div>
+          </label>
+          <label class="ob-radio-opt">
+            <input type="radio" name="ob-delivery" value="Pick-up">
+            <div class="ob-radio-opt-info">
+              <div class="ob-radio-opt-title">Pick-up</div>
+              <div class="ob-radio-opt-sub">Coordinate via Messenger</div>
+            </div>
+          </label>
+        </div>
+      </div>
+      <hr class="ob-div">
+      <div class="ob-field">
+        <label>Payment Method</label>
+        <div class="ob-radio-group" id="ob-pay-opts">
+          <label class="ob-radio-opt sel">
+            <input type="radio" name="ob-pay" value="GCash" checked>
+            <div class="ob-radio-opt-info">
+              <div class="ob-radio-opt-title">GCash <span class="ob-badge">DEFAULT</span></div>
+              <div class="ob-radio-opt-sub">Send to 09XX XXX XXXX</div>
+            </div>
+          </label>
+          <label class="ob-radio-opt">
+            <input type="radio" name="ob-pay" value="Cash on Delivery">
+            <div class="ob-radio-opt-info">
+              <div class="ob-radio-opt-title">Cash on Delivery</div>
+              <div class="ob-radio-opt-sub">Prepare exact amount</div>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div class="ob-field">
+        <label>Note (optional)</label>
+        <textarea id="ob-note" rows="2" placeholder="Special instructions, gift message, etc."></textarea>
+      </div>
+      <hr class="ob-div">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:10px">Order Summary</div>
+      <div id="ob-checkout-summary"></div>
+      <div class="ob-error" id="ob-checkout-error"></div>
+    </div>
+    <div class="ob-panel-footer">
+      <button class="ob-btn-primary" id="ob-pay-btn">Place Order →</button>
+    </div>
+  </div>
+
+  <!-- PAYMENT PANEL -->
+  <div id="ob-pay-panel" class="ob-panel">
+    <div class="ob-panel-head">
+      <h2>Complete Payment</h2>
+      <button class="ob-close-btn" id="ob-pay-close">✕</button>
+    </div>
+    <div class="ob-panel-body">
+      <div id="ob-success-banner" class="ob-success-banner" style="display:none">
+        <div class="ob-sb-icon">✅</div>
+        <h3>Order Received!</h3>
+        <p>Your order is now logged. We'll confirm shortly.</p>
+        <div class="ob-sb-track" id="ob-tracking-no"></div>
+      </div>
+      <div id="ob-submitting" style="text-align:center;padding:32px 0">
+        <div style="font-size:32px;margin-bottom:10px">⏳</div>
+        <p style="font-size:13px;color:var(--ink2)">Placing your order…</p>
+      </div>
+      <div id="ob-pay-error" class="ob-error" style="text-align:center;margin-bottom:10px"></div>
+      <div id="ob-post-order" style="display:none">
+        <div id="ob-gcash-body">
+          <h3 style="font-family:var(--serif);font-size:20px;font-weight:500;text-align:center;margin-bottom:14px">Send Payment Now</h3>
+          <div class="ob-gcash-screen">
+            <div style="font-size:11px;color:var(--ink2);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">GCash Number</div>
+            <div class="ob-gcash-num" id="ob-gcash-number">09XX XXX XXXX</div>
+            <div class="ob-copy-row"><button class="ob-copy-btn" id="ob-copy-num">📋 Copy Number</button></div>
+            <div class="ob-gcash-name" id="ob-gcash-name">Account Name</div>
+            <div class="ob-gcash-amount">
+              <div class="ob-ga-label">Amount to Send</div>
+              <div class="ob-ga-val" id="ob-gcash-total">₱0</div>
+            </div>
+          </div>
+          <div class="ob-note-box">
+            <h4>📋 How to pay</h4>
+            <p>
+              <strong>1.</strong> Open your GCash app.<br>
+              <strong>2.</strong> Tap <em>Send Money</em> → enter the number above.<br>
+              <strong>3.</strong> Send exactly <strong id="ob-gcash-total2">₱0</strong>.<br>
+              <strong>4.</strong> Screenshot your GCash receipt.<br>
+              <strong>5.</strong> Tap the button below to send it to us on Messenger.
+            </p>
+          </div>
+          <a href="#" target="_blank" class="ob-messenger-btn" id="ob-messenger-btn">
+            💬 Send Payment Proof via Messenger
+          </a>
+        </div>
+        <div id="ob-cod-body" style="display:none">
+          <div class="ob-note-box">
+            <h4>💵 Cash on Delivery</h4>
+            <p>Please prepare <strong id="ob-cod-total">₱0</strong> in exact change. Our rider will collect upon delivery.</p>
+          </div>
+          <a href="#" target="_blank" class="ob-messenger-btn" id="ob-cod-messenger-btn">
+            💬 Message Us for Updates
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRACK PANEL -->
+  <div id="ob-track-panel" class="ob-panel">
+    <div class="ob-panel-head">
+      <button class="ob-back-btn" id="ob-track-back">←</button>
+      <h2>Track Order</h2>
+      <button class="ob-close-btn" id="ob-track-close">✕</button>
+    </div>
+    <div class="ob-panel-body">
+      <div class="ob-field">
+        <label>Order Reference Number</label>
+        <input id="ob-track-ref" type="text" placeholder="e.g. OBE-001">
+        <div style="font-size:11px;color:var(--ink2);margin-top:4px">Check your confirmation screen or Messenger chat</div>
+      </div>
+      <button class="ob-btn-primary" id="ob-track-btn">Track My Order →</button>
+      <div class="ob-error" id="ob-track-error" style="margin-top:8px;text-align:center"></div>
+      <div id="ob-track-result" style="display:none;margin-top:16px">
+        <div class="ob-timeline">
+          <div class="ob-tl-step" id="ob-tl-0"><div class="ob-tl-dot">📦</div><div class="ob-tl-label">Pending</div></div>
+          <div class="ob-tl-step" id="ob-tl-1"><div class="ob-tl-dot">🍳</div><div class="ob-tl-label">Packing</div></div>
+          <div class="ob-tl-step" id="ob-tl-2"><div class="ob-tl-dot">🛵</div><div class="ob-tl-label">On the Way</div></div>
+          <div class="ob-tl-step" id="ob-tl-3"><div class="ob-tl-dot">✅</div><div class="ob-tl-label">Delivered</div></div>
+        </div>
+        <div class="ob-track-card">
+          <div class="ob-tc-no" id="ob-tc-no"></div>
+          <div class="ob-tc-items" id="ob-tc-items"></div>
+        </div>
+        <div id="ob-track-map" style="display:none;margin-top:10px">
+          <a id="ob-track-map-link" href="#" target="_blank" class="ob-btn-primary" style="display:block;text-align:center;text-decoration:none;padding:12px;border-radius:12px;background:var(--ink);color:var(--cream);font-size:13px;font-weight:600">
+            📍 View Rider Location
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- #ob-root -->
+
+<script>
+(function(){
+  if (window.__obesOrderingInit) return;
+  window.__obesOrderingInit = true;
+
+  // ══════════════════════════════════════════════════════
+  // CONFIG — update these before going live
+  // ══════════════════════════════════════════════════════
+  var API_URL       = 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+  var MESSENGER_URL = 'https://m.me/YOUR_PAGE_ID_HERE';
+  var GCASH_NUMBER  = '09XX XXX XXXX';
+  var GCASH_NAME    = 'Your Name Here';
+  var DELIVERY_FEE  = 25;
+  var SERVICE_FEE   = 15;
+  var MIN_ORDER_FREE= 500;   // free delivery above this subtotal
+
+  // ══════════════════════════════════════════════════════
+  // DEMO MENU (shown while API loads or on error)
+  // ══════════════════════════════════════════════════════
+  var DEMO_MENU = [
+    {
+      item:'Lavender Soap Bar', category:'Soap', price:150,
+      description:'Handmade lavender soap with shea butter and oatmeal.',
+      image:'https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=400&q=70',
+      images:['https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=400&q=70'],
+      options:[
+        {type:'pills',label:'Scent',key:'scent',choices:[{label:'Lavender',add:0},{label:'Rose',add:0},{label:'Unscented',add:-10}]},
+        {type:'pills',label:'Size',key:'size',choices:[{label:'Small (50g)',add:0},{label:'Large (100g)',add:50}]}
+      ], linkTo:''
+    },
+    {
+      item:'Silver Ring', category:'Jewelry', price:800,
+      description:'Handcrafted sterling silver ring, adjustable fit.',
+      image:'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&q=70',
+      images:['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&q=70'],
+      options:[
+        {type:'pills',label:'Ring Size',key:'ringsize',choices:[{label:'5',add:0},{label:'6',add:0},{label:'7',add:0},{label:'8',add:0}]},
+        {type:'text',label:'Engraving (optional)',key:'engraving',placeholder:'Max 10 characters'}
+      ], linkTo:''
+    },
+    {
+      item:'Pearl Bracelet', category:'Jewelry', price:650,
+      description:'Freshwater pearl bracelet with gold clasp.',
+      image:'https://images.unsplash.com/photo-1573408301185-9519f94815b8?w=400&q=70',
+      images:['https://images.unsplash.com/photo-1573408301185-9519f94815b8?w=400&q=70'],
+      options:[
+        {type:'pills',label:'Size',key:'size',choices:[{label:'Small (16cm)',add:0},{label:'Medium (18cm)',add:0},{label:'Large (20cm)',add:50}]},
+        {type:'pills',label:'Clasp Color',key:'clasp',choices:[{label:'Gold',add:0},{label:'Silver',add:0}]}
+      ], linkTo:''
+    },
+    {
+      item:'Lavender Candle', category:'Candles', price:220,
+      description:'Soy wax candle with dried lavender. 40hr burn time.',
+      image:'https://images.unsplash.com/photo-1602874801007-2426a7f5b7f0?w=400&q=70',
+      images:['https://images.unsplash.com/photo-1602874801007-2426a7f5b7f0?w=400&q=70'],
+      options:[
+        {type:'pills',label:'Size',key:'size',choices:[{label:'Small (4oz)',add:0},{label:'Large (8oz)',add:100}]}
+      ], linkTo:''
+    },
+    {
+      item:'Shea Butter Soap', category:'Soap', price:150,
+      description:'Rich shea butter soap, gentle on all skin types.',
+      image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=70',
+      images:['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=70'],
+      options:[
+        {type:'pills',label:'Scent',key:'scent',choices:[{label:'Vanilla',add:0},{label:'Coconut',add:0},{label:'Unscented',add:-10}]}
+      ], linkTo:''
+    },
+    {
+      item:'Rose Gold Earrings', category:'Jewelry', price:550,
+      description:'Dainty rose gold drop earrings, hypoallergenic.',
+      image:'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=70',
+      images:['https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=70'],
+      options:[
+        {type:'pills',label:'Style',key:'style',choices:[{label:'Drop',add:0},{label:'Stud',add:-50}]}
+      ], linkTo:''
+    },
+    {
+      item:'Gift Set Bundle', category:'Bundles', price:500,
+      description:'Curated gift set: 1 soap + 1 candle. Perfect for gifting.',
+      image:'https://images.unsplash.com/photo-1512909006721-3d6018887383?w=400&q=70',
+      images:['https://images.unsplash.com/photo-1512909006721-3d6018887383?w=400&q=70'],
+      options:[], linkTo:''
+    }
+  ];
+
+  // ══════════════════════════════════════════════════════
+  // STATE
+  // ══════════════════════════════════════════════════════
+  var $ = function(id){ return document.getElementById(id); };
+  var cart = [];
+  var currentItem = null;
+  var modalQty = 1;
+  var modalOptions = {};
+  var allItems = [];
+  var activeCategory = 'All';
+  var obSubmitting = false;
+
+  // ══════════════════════════════════════════════════════
+  // PANELS
+  // ══════════════════════════════════════════════════════
+  function openPanel(id){
+    $(id).classList.add('show');
+    $('ob-overlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePanel(id){
+    $(id).classList.remove('show');
+    if (!document.querySelector('.ob-panel.show')){
+      $('ob-overlay').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  }
+  function closeAll(){
+    document.querySelectorAll('.ob-panel').forEach(p=>p.classList.remove('show'));
+    $('ob-overlay').classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  // ══════════════════════════════════════════════════════
+  // MENU LOAD
+  // ══════════════════════════════════════════════════════
+  function loadMenu(){
+    fetch(API_URL + '?action=menu')
+      .then(r=>r.json())
+      .then(d=>{
+        $('ob-status').style.display = 'none';
+        var menu = (d.ok && d.menu && d.menu.length) ? d.menu : DEMO_MENU;
+        allItems = menu;
+        renderFilter(menu);
+        renderGrid(menu);
+      })
+      .catch(()=>{
+        $('ob-status').style.display = 'none';
+        allItems = DEMO_MENU;
+        renderFilter(DEMO_MENU);
+        renderGrid(DEMO_MENU);
+      });
+  }
+
+  // ══════════════════════════════════════════════════════
+  // FILTER
+  // ══════════════════════════════════════════════════════
+  function renderFilter(items){
+    var cats = ['All'];
+    items.forEach(it=>{ if(it.category && !cats.includes(it.category)) cats.push(it.category); });
+    if (cats.length <= 2){ $('ob-filter-row').style.display='none'; return; }
+    $('ob-filter-row').style.display = 'flex';
+    $('ob-filter-row').innerHTML = cats.map(c=>`
+      <button class="ob-filter-btn${c===activeCategory?' active':''}" data-cat="${esc(c)}">${esc(c)}</button>
+    `).join('');
+    $('ob-filter-row').querySelectorAll('.ob-filter-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        activeCategory = btn.dataset.cat;
+        $('ob-filter-row').querySelectorAll('.ob-filter-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        var filtered = activeCategory==='All' ? allItems : allItems.filter(it=>it.category===activeCategory);
+        renderGrid(filtered);
+      });
+    });
+  }
+
+  // ══════════════════════════════════════════════════════
+  // GRID
+  // ══════════════════════════════════════════════════════
+  function renderGrid(items){
+    var grid = $('ob-grid');
+    if (!items.length){
+      grid.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--ink2);font-size:13px">No products in this category yet.</div>';
+      return;
+    }
+    grid.innerHTML = items.map((it,i)=>`
+      <div class="ob-card" data-idx="${i}">
+        <div class="ob-card-img-wrap">
+          ${it.image
+            ? `<img class="ob-card-img" src="${esc(it.image)}" alt="${esc(it.item)}" onerror="this.parentElement.innerHTML='<div class=ob-card-img-placeholder>🛍️</div>'">`
+            : `<div class="ob-card-img-placeholder">🛍️</div>`
+          }
+        </div>
+        <div class="ob-card-body">
+          ${it.category ? `<div class="ob-card-cat">${esc(it.category)}</div>` : ''}
+          <h3 class="ob-card-name">${esc(it.item)}</h3>
+          ${it.description ? `<div class="ob-card-desc">${esc(it.description)}</div>` : ''}
+          <div class="ob-card-price">₱${it.price}</div>
+          <button class="ob-card-btn">${it.options && it.options.length ? 'Customize & Add' : 'Add to Cart'}</button>
+        </div>
+      </div>
+    `).join('');
+
+    grid.querySelectorAll('.ob-card').forEach(card=>{
+      var idx = Number(card.dataset.idx);
+      var it = items[idx];
+      card.querySelector('.ob-card-btn').addEventListener('click', e=>{
+        e.stopPropagation();
+        var target = it;
+        if (it.linkTo && it.linkTo.trim()){
+          var found = allItems.find(p=>p.item.trim().toLowerCase()===it.linkTo.trim().toLowerCase());
+          if (found) target = found;
+        }
+        openModal(target);
+      });
+    });
+  }
+
+  // ══════════════════════════════════════════════════════
+  // MODAL
+  // ══════════════════════════════════════════════════════
+  function openModal(item){
+    currentItem = item;
+    modalQty = 1;
+    modalOptions = {};
+
+    var images = (item.images && item.images.length) ? item.images : (item.image ? [item.image] : []);
+    renderGallery(images);
+
+    $('ob-m-name').textContent = item.item;
+    $('ob-m-price').textContent = '₱' + item.price;
+    $('ob-m-desc').textContent = item.description || '';
+
+    renderOptions(item.options || []);
+    updateModalTotal();
+
+    $('ob-modal').classList.add('show');
+    $('ob-modal').querySelector('.ob-modal-scroll').scrollTop = 0;
+    $('ob-overlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(){
+    $('ob-modal').classList.remove('show');
+    if (!document.querySelector('.ob-panel.show')){
+      $('ob-overlay').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  }
+
+  function renderGallery(images){
+    var mainImg = $('ob-m-img');
+    var thumbsEl = $('ob-m-thumbs');
+    if (!images.length){
+      mainImg.src = '';
+      mainImg.parentElement.style.background = 'linear-gradient(145deg,#F5EFE6,#EDE4D8)';
+      thumbsEl.innerHTML = '';
+      thumbsEl.style.display = 'none';
+      return;
+    }
+    mainImg.src = images[0];
+    if (images.length <= 1){
+      thumbsEl.innerHTML = '';
+      thumbsEl.style.display = 'none';
+      return;
+    }
+    thumbsEl.style.display = 'flex';
+    thumbsEl.innerHTML = images.map((img,i)=>`
+      <div class="ob-thumb${i===0?' active':''}" data-src="${esc(img)}">
+        <img src="${esc(img)}" alt="">
+      </div>
+    `).join('');
+    thumbsEl.querySelectorAll('.ob-thumb').forEach(th=>{
+      th.addEventListener('click',()=>{
+        mainImg.src = th.dataset.src;
+        thumbsEl.querySelectorAll('.ob-thumb').forEach(t=>t.classList.remove('active'));
+        th.classList.add('active');
+      });
+    });
+  }
+
+  // ══════════════════════════════════════════════════════
+  // DYNAMIC OPTIONS
+  // ══════════════════════════════════════════════════════
+  function renderOptions(opts){
+    var container = $('ob-m-options');
+    if (!opts || !opts.length){ container.innerHTML=''; return; }
+
+    container.innerHTML = opts.map(opt=>{
+      if (opt.type==='pills'){
+        return `
+          <div class="ob-section">
+            <div class="ob-section-label">${esc(opt.label)}</div>
+            <div class="ob-pills" data-key="${esc(opt.key)}">
+              ${opt.choices.map((c,i)=>`
+                <button type="button" class="ob-pill${i===0?' sel':''}"
+                  data-label="${esc(c.label)}" data-add="${c.add||0}">
+                  ${esc(c.label)}${c.add ? ` <span style="opacity:.6;font-size:11px">(${c.add>0?'+':''}₱${c.add})</span>` : ''}
+                </button>
+              `).join('')}
+            </div>
+          </div>`;
+      }
+      if (opt.type==='slider'){
+        return `
+          <div class="ob-section">
+            <div class="ob-section-label">${esc(opt.label)}</div>
+            <div class="ob-slider-row">
+              <input type="range" data-key="${esc(opt.key)}"
+                min="${opt.min}" max="${opt.max}" step="${opt.step}" value="${opt.default}">
+              <div class="ob-slider-val" data-valfor="${esc(opt.key)}">${opt.default}%</div>
+            </div>
+          </div>`;
+      }
+      if (opt.type==='text'){
+        return `
+          <div class="ob-section">
+            <div class="ob-section-label">${esc(opt.label)}</div>
+            <input type="text" class="ob-text-input" data-key="${esc(opt.key)}"
+              placeholder="${esc(opt.placeholder||'')}">
+          </div>`;
+      }
+      return '';
+    }).join('');
+
+    // Set defaults
+    opts.forEach(opt=>{
+      if (opt.type==='pills') modalOptions[opt.key]={label:opt.choices[0].label,add:opt.choices[0].add||0};
+      if (opt.type==='slider') modalOptions[opt.key]=opt.default;
+      if (opt.type==='text') modalOptions[opt.key]='';
+    });
+
+    // Pill listeners
+    container.querySelectorAll('.ob-pills').forEach(group=>{
+      var key = group.dataset.key;
+      group.querySelectorAll('.ob-pill').forEach(pill=>{
+        pill.addEventListener('click',()=>{
+          group.querySelectorAll('.ob-pill').forEach(p=>p.classList.remove('sel'));
+          pill.classList.add('sel');
+          modalOptions[key]={label:pill.dataset.label,add:Number(pill.dataset.add)};
+          updateModalTotal();
+        });
+      });
+    });
+
+    // Slider listeners
+    container.querySelectorAll('input[type=range]').forEach(slider=>{
+      var key = slider.dataset.key;
+      slider.addEventListener('input',e=>{
+        modalOptions[key] = e.target.value;
+        container.querySelector(`[data-valfor="${key}"]`).textContent = e.target.value+'%';
+      });
+    });
+
+    // Text listeners
+    container.querySelectorAll('.ob-text-input').forEach(input=>{
+      var key = input.dataset.key;
+      input.addEventListener('input',e=>{ modalOptions[key]=e.target.value; });
+    });
+  }
+
+  function getOptionsExtra(){
+    return Object.values(modalOptions).reduce((sum,v)=>sum+(v&&v.add?v.add:0),0);
+  }
+
+  function buildOptionsSummary(opts){
+    if (!opts || !opts.length) return '';
+    return opts.map(opt=>{
+      var val = modalOptions[opt.key];
+      if (opt.type==='pills' && val) return `${opt.label}: ${val.label}`;
+      if (opt.type==='slider' && val!==undefined) return `${opt.label}: ${val}%`;
+      if (opt.type==='text' && val) return `${opt.label}: ${val}`;
+      return null;
+    }).filter(Boolean).join(' · ');
+  }
+
+  function updateModalTotal(){
+    if (!currentItem) return;
+    var total = (currentItem.price + getOptionsExtra()) * modalQty;
+    $('ob-m-qty').textContent = modalQty;
+    $('ob-m-total').textContent = '₱' + total;
+  }
+
+  $('ob-m-minus').addEventListener('click',()=>{ if(modalQty>1)modalQty--; updateModalTotal(); });
+  $('ob-m-plus').addEventListener('click',()=>{ modalQty++; updateModalTotal(); });
+  $('ob-modal-backdrop').addEventListener('click', closeModal);
+
+  $('ob-modal-atc').addEventListener('click',()=>{
+    var extra = getOptionsExtra();
+    var opts = currentItem.options || [];
+    var summary = buildOptionsSummary(opts);
+    cart.push({
+      item: currentItem.item,
+      price: currentItem.price + extra,
+      basePrice: currentItem.price,
+      optionsSummary: summary,
+      optionsRaw: JSON.parse(JSON.stringify(modalOptions)),
+      qty: modalQty
+    });
+    closeModal();
+    renderFab();
+    renderCart();
+    openPanel('ob-cart-panel');
+  });
+
+  // ══════════════════════════════════════════════════════
+  // FAB & CART
+  // ══════════════════════════════════════════════════════
+  function renderFab(){
+    var count = cart.reduce((s,l)=>s+l.qty,0);
+    $('ob-fab-text').textContent = count+(count===1?' item':' items')+' · ₱'+cartSubtotal();
+    $('ob-fab').classList.toggle('show', count>0);
+  }
+
+  function cartSubtotal(){
+    return cart.reduce((s,l)=>s+l.price*l.qty,0);
+  }
+
+  function renderCart(){
+    var lines = $('ob-cart-lines');
+    if (!cart.length){
+      lines.innerHTML = `
+        <div class="ob-empty-cart">
+          <div class="ob-ec-icon">🛍️</div>
+          Your bag is empty.<br>Browse and add something beautiful!
+        </div>`;
+      $('ob-checkout-btn').style.display='none';
+      $('ob-order-summary').innerHTML='';
+      $('ob-topup-notice').innerHTML='';
+      return;
+    }
+    $('ob-checkout-btn').style.display='block';
+    lines.innerHTML = cart.map((l,i)=>`
+      <div class="ob-cart-item">
+        <div class="ob-ci-info">
+          <div class="ob-ci-name">${esc(l.item)}</div>
+          ${l.optionsSummary ? `<div class="ob-ci-sub">${esc(l.optionsSummary)}</div>` : ''}
+          <div class="ob-ci-price">₱${l.price} each</div>
+          <div class="ob-cart-qty">
+            <button data-i="${i}" data-d="-1">−</button>
+            <span>${l.qty}</span>
+            <button data-i="${i}" data-d="1">+</button>
+          </div>
+        </div>
+        <div class="ob-ci-total">₱${l.price*l.qty}</div>
+      </div>
+    `).join('');
+
+    lines.querySelectorAll('button[data-i]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        var i=Number(btn.dataset.i),d=Number(btn.dataset.d);
+        cart[i].qty+=d;
+        if(cart[i].qty<=0) cart.splice(i,1);
+        renderCart(); renderFab();
+      });
+    });
+    renderOrderSummary('ob-order-summary');
+  }
+
+  function renderOrderSummary(elId){
+    var sub = cartSubtotal();
+    var isPickup = (document.querySelector('input[name="ob-delivery"]:checked')||{}).value==='Pick-up';
+    var freeDelivery = isPickup || (sub >= MIN_ORDER_FREE);
+    var delivery = isPickup ? 0 : (freeDelivery ? 0 : DELIVERY_FEE);
+    var grandTotal = sub + delivery + SERVICE_FEE;
+    var need = (!isPickup && !freeDelivery) ? MIN_ORDER_FREE - sub : 0;
+
+    var deliveryRow = isPickup ? '' : `
+      <div class="ob-summary-row">
+        <span>Delivery Fee</span>
+        ${freeDelivery ? '<span style="color:var(--green)">FREE</span>' : `<span>₱${delivery}</span>`}
+      </div>`;
+
+    $(elId).innerHTML = `
+      ${cart.map(l=>`<div class="ob-summary-row"><span>${esc(l.item)} ×${l.qty}</span><span>₱${l.price*l.qty}</span></div>`).join('')}
+      <hr class="ob-div" style="margin:8px 0">
+      <div class="ob-summary-row"><span>Subtotal</span><span>₱${sub}</span></div>
+      ${deliveryRow}
+      <div class="ob-summary-row"><span>Service Fee</span><span>₱${SERVICE_FEE}</span></div>
+      <div class="ob-summary-row total"><span>Total</span><span>₱${grandTotal}</span></div>
+    `;
+
+    if (elId==='ob-order-summary'){
+      if (isPickup)
+        $('ob-topup-notice').innerHTML='<div class="ob-topup free">🏪 Pick-up — no delivery fee!</div>';
+      else if (!freeDelivery)
+        $('ob-topup-notice').innerHTML=`<div class="ob-topup">🚚 Add ₱${need} more for <strong>FREE delivery</strong> (min. ₱${MIN_ORDER_FREE})</div>`;
+      else
+        $('ob-topup-notice').innerHTML='<div class="ob-topup free">✅ You qualify for <strong>FREE delivery!</strong></div>';
+    }
+    return {sub, delivery, grandTotal};
+  }
+
+  // ══════════════════════════════════════════════════════
+  // EVENTS — nav
+  // ══════════════════════════════════════════════════════
+  $('ob-fab').addEventListener('click',()=>{ renderCart(); openPanel('ob-cart-panel'); });
+  $('ob-cart-close').addEventListener('click', closeAll);
+  $('ob-overlay').addEventListener('click',()=>{ closeModal(); closeAll(); });
+
+  $('ob-checkout-btn').addEventListener('click',()=>{
+    renderOrderSummary('ob-checkout-summary');
+    closePanel('ob-cart-panel');
+    openPanel('ob-checkout-panel');
+  });
+  $('ob-checkout-back').addEventListener('click',()=>{
+    closePanel('ob-checkout-panel');
+    renderCart();
+    openPanel('ob-cart-panel');
+  });
+  $('ob-checkout-close').addEventListener('click', closeAll);
+  $('ob-pay-close').addEventListener('click', closeAll);
+
+  // Delivery radio — re-render summary
+  document.querySelectorAll('.ob-radio-opt input').forEach(inp=>{
+    inp.addEventListener('change',()=>{
+      var group = inp.closest('.ob-radio-group');
+      group.querySelectorAll('.ob-radio-opt').forEach(o=>o.classList.remove('sel'));
+      inp.closest('.ob-radio-opt').classList.add('sel');
+      if (inp.name==='ob-delivery') renderOrderSummary('ob-checkout-summary');
+    });
+  });
+
+  // Three-dot menu
+  $('ob-menu-dot').addEventListener('click',e=>{
+    e.stopPropagation();
+    $('ob-menu-pop').classList.toggle('show');
+  });
+  document.addEventListener('click',()=>$('ob-menu-pop').classList.remove('show'));
+  $('ob-menu-messenger').addEventListener('click',()=>{ window.open(MESSENGER_URL,'_blank'); });
+  $('ob-track-open').addEventListener('click',()=>{
+    $('ob-menu-pop').classList.remove('show');
+    $('ob-track-ref').value='';
+    $('ob-track-error').textContent='';
+    $('ob-track-result').style.display='none';
+    openPanel('ob-track-panel');
+  });
+  $('ob-track-back').addEventListener('click',()=>closePanel('ob-track-panel'));
+  $('ob-track-close').addEventListener('click', closeAll);
+
+  // ══════════════════════════════════════════════════════
+  // VALIDATION
+  // ══════════════════════════════════════════════════════
+  function normalizePHPhone(raw){
+    var digits = String(raw||'').replace(/[^\d+]/g,'');
+    var core = null;
+    if(/^\+?63\d{10}$/.test(digits)) core=digits.replace(/^\+?63/,'');
+    else if(/^0\d{10}$/.test(digits)) core=digits.slice(1);
+    else if(/^\d{10}$/.test(digits)) core=digits;
+    if(core && /^9\d{9}$/.test(core)) return '0'+core;
+    return null;
+  }
+  function isValidName(s){ return /[A-Za-zÀ-ÿ]/.test(s) && s.replace(/[^A-Za-zÀ-ÿ]/g,'').length>=2; }
+  function isValidAddress(s){ return s.length>=8 && /[A-Za-zÀ-ÿ]/.test(s); }
+
+  // ══════════════════════════════════════════════════════
+  // PLACE ORDER
+  // ══════════════════════════════════════════════════════
+  $('ob-pay-btn').addEventListener('click',()=>{
+    if (obSubmitting) return;
+    var fname=$('ob-fname').value.trim(), lname=$('ob-lname').value.trim();
+    var contactRaw=$('ob-contact').value.trim(), address=$('ob-address').value.trim();
+
+    $('ob-name-error').textContent='';
+    $('ob-contact-error').textContent='';
+    $('ob-address-error').textContent='';
+    $('ob-checkout-error').textContent='';
+
+    if (!fname||!lname){ $('ob-name-error').textContent='Please fill in both first and last name.'; return; }
+    if (!isValidName(fname)||!isValidName(lname)){ $('ob-name-error').textContent='Please enter a real name.'; return; }
+    var contact = normalizePHPhone(contactRaw);
+    if (!contact){ $('ob-contact-error').textContent='Please enter a valid PH mobile number.'; return; }
+    if (!address){ $('ob-address-error').textContent='Please enter your delivery address.'; return; }
+    if (!isValidAddress(address)){ $('ob-address-error').textContent='Please enter a complete address.'; return; }
+    if (!cart.length){ $('ob-checkout-error').textContent='Your cart is empty!'; return; }
+
+    var name = fname+' '+lname;
+    var {sub, delivery, grandTotal} = renderOrderSummary('ob-checkout-summary');
+    var payMethod = document.querySelector('input[name="ob-pay"]:checked').value;
+    var deliveryOpt = document.querySelector('input[name="ob-delivery"]:checked').value;
+    var note = $('ob-note').value.trim();
+
+    // Build items string + options summary
+    var itemsStr = cart.map(l=>l.item+' ×'+l.qty).join('; ');
+    var optsStr  = cart.map(l=>l.optionsSummary||'—').join('; ');
+
+    obSubmitting = true;
+    $('ob-pay-btn').disabled=true;
+    $('ob-pay-btn').textContent='Placing order…';
+    $('ob-success-banner').style.display='none';
+    $('ob-post-order').style.display='none';
+    $('ob-pay-error').textContent='';
+    $('ob-submitting').style.display='block';
+
+    closePanel('ob-checkout-panel');
+    openPanel('ob-pay-panel');
+
+    var payload = {
+      action:'order', name, contact, address,
+      deliveryOption:deliveryOpt, paymentMethod:payMethod,
+      riderNote:note, items:itemsStr, optionsSummary:optsStr,
+      subtotal:sub, delivery:delivery, serviceFee:SERVICE_FEE, total:grandTotal,
+      cartDetail:cart
+    };
+
+    fetch(API_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(payload)
+    })
+    .then(r=>r.json())
+    .then(d=>{
+      if (!d.ok) throw new Error(d.error||'Failed');
+      obSubmitting=false;
+      onOrderConfirmed(d.trackingNumber, grandTotal, payMethod);
+    })
+    .catch(()=>{
+      obSubmitting=false;
+      $('ob-submitting').style.display='none';
+      $('ob-pay-error').textContent='Something went wrong. Please message us on Messenger to place your order manually.';
+      $('ob-pay-btn').disabled=false;
+      $('ob-pay-btn').textContent='Place Order →';
+    });
+  });
+
+  function onOrderConfirmed(trackingNo, grandTotal, payMethod){
+    $('ob-submitting').style.display='none';
+    $('ob-success-banner').style.display='block';
+    $('ob-tracking-no').textContent='Order ' + trackingNo;
+    $('ob-gcash-number').textContent = GCASH_NUMBER;
+    $('ob-gcash-name').textContent = GCASH_NAME;
+    $('ob-gcash-total').textContent = '₱'+grandTotal;
+    $('ob-gcash-total2').textContent = '₱'+grandTotal;
+    $('ob-cod-total').textContent = '₱'+grandTotal;
+    $('ob-messenger-btn').href = MESSENGER_URL;
+    $('ob-cod-messenger-btn').href = MESSENGER_URL;
+    $('ob-gcash-body').style.display = payMethod==='GCash' ? 'block' : 'none';
+    $('ob-cod-body').style.display  = payMethod==='Cash on Delivery' ? 'block' : 'none';
+    $('ob-post-order').style.display='block';
+    cart=[];
+    renderFab();
+    $('ob-pay-btn').disabled=false;
+    $('ob-pay-btn').textContent='Place Order →';
+  }
+
+  // ══════════════════════════════════════════════════════
+  // COPY NUMBER
+  // ══════════════════════════════════════════════════════
+  $('ob-copy-num').addEventListener('click',()=>{
+    var num = GCASH_NUMBER.replace(/\s/g,'');
+    var done=()=>{
+      $('ob-copy-num').textContent='✅ Copied!';
+      $('ob-copy-num').classList.add('copied');
+      setTimeout(()=>{ $('ob-copy-num').textContent='📋 Copy Number'; $('ob-copy-num').classList.remove('copied'); },2000);
+    };
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(num).then(done).catch(()=>{fallbackCopy(num);done();});
+    else {fallbackCopy(num);done();}
+  });
+  function fallbackCopy(t){ var ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta); }
+
+  // ══════════════════════════════════════════════════════
+  // TRACK ORDER
+  // ══════════════════════════════════════════════════════
+  $('ob-track-btn').addEventListener('click',()=>{
+    var ref = $('ob-track-ref').value.trim().toUpperCase();
+    $('ob-track-error').textContent='';
+    $('ob-track-result').style.display='none';
+    if (!ref){ $('ob-track-error').textContent='Please enter your order reference number.'; return; }
+    $('ob-track-btn').textContent='Checking…';
+    $('ob-track-btn').disabled=true;
+
+    fetch(API_URL+'?action=track&ref='+encodeURIComponent(ref))
+      .then(r=>r.json())
+      .then(d=>{
+        $('ob-track-btn').textContent='Track My Order →';
+        $('ob-track-btn').disabled=false;
+        if (!d.ok){ $('ob-track-error').textContent='Order not found. Check the reference number and try again.'; return; }
+        renderTrackResult(d);
+      })
+      .catch(()=>{
+        $('ob-track-btn').textContent='Track My Order →';
+        $('ob-track-btn').disabled=false;
+        $('ob-track-error').textContent='Could not connect. Please try again.';
+      });
+  });
+
+  function renderTrackResult(d){
+    var statusMap = {
+      '⏳ Pending':0, '🍳 Cooking':1, '🛵 On the Way':2, '✅ Delivered':3
+    };
+    var step = statusMap[d.status] !== undefined ? statusMap[d.status] : 0;
+    for(var i=0;i<=3;i++){
+      var el=$('ob-tl-'+i);
+      el.classList.remove('done','active');
+      if(i<step) el.classList.add('done');
+      else if(i===step) el.classList.add('active');
+    }
+    $('ob-tc-no').textContent = d.orderRef + ' · ' + d.status;
+    $('ob-tc-items').innerHTML = esc(d.items||'')+(d.optionsSummary&&d.optionsSummary!=='—'?`<br><span style="opacity:.7">${esc(d.optionsSummary)}</span>`:'')+`<br><strong>Total: ₱${d.total}</strong>`;
+    if(d.riderLocation && d.riderLocation.trim()){
+      $('ob-track-map').style.display='block';
+      $('ob-track-map-link').href = d.riderLocation;
+    } else {
+      $('ob-track-map').style.display='none';
+    }
+    $('ob-track-result').style.display='block';
+  }
+
+  // ══════════════════════════════════════════════════════
+  // HELPERS
+  // ══════════════════════════════════════════════════════
+  function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // ══════════════════════════════════════════════════════
+  // INIT
+  // ══════════════════════════════════════════════════════
+  renderFab();
+  renderCart();
+  loadMenu();
+
+})();
+</script>
+</body>
+</html>
