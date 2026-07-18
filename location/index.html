@@ -321,6 +321,8 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
 .ob-copy-btn.copied{background:var(--green);border-color:var(--green);color:#FFF8EE}
 .ob-messenger-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#0084FF;color:#fff;border:none;border-radius:12px;padding:14px 0;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;font-family:'DM Sans',sans-serif;transition:background .15s;margin-top:6px}
 .ob-messenger-btn:hover{background:#006fd6}
+.ob-track-btn-inline{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#FFF8EE;border:none;border-radius:12px;padding:14px 0;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .15s;margin-top:10px;box-shadow:0 4px 16px rgba(212,130,10,.3)}
+.ob-track-btn-inline:hover{background:linear-gradient(135deg,var(--glow),var(--accent))}
 .ob-timeline{display:flex;justify-content:space-between;margin:18px 0 22px;position:relative}
 .ob-timeline::before{content:'';position:absolute;top:13px;left:6%;right:6%;height:2px;background:var(--line);z-index:0}
 .ob-tl-step{flex:1;text-align:center;position:relative;z-index:1}
@@ -332,6 +334,16 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
 .ob-track-card{background:var(--warm);border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid var(--line)}
 .ob-track-card .ob-tc-no{font-family:var(--mono);font-weight:500;color:var(--accent);font-size:13px;margin-bottom:6px;letter-spacing:.04em}
 .ob-track-card .ob-tc-items{font-size:12px;color:var(--ink2);line-height:1.65}
+
+/* Hero ⋯ menu */
+.ob-hero-menu-wrap{position:absolute;top:14px;right:14px;z-index:5}
+.ob-hero-menu-btn{width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.42);backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.22);color:#FFF8EE;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;line-height:1}
+.ob-hero-menu-btn:hover{background:rgba(0,0,0,.6)}
+.ob-hero-menu-dd{position:absolute;top:44px;right:0;min-width:230px;background:var(--cream);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgba(30,10,0,.35);overflow:hidden;display:none}
+.ob-hero-menu-dd.show{display:block}
+.ob-hero-menu-item{display:flex;align-items:center;gap:10px;padding:13px 16px;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;background:none;border:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif;text-decoration:none;transition:background .12s}
+.ob-hero-menu-item:hover{background:var(--warm)}
+.ob-hero-menu-item + .ob-hero-menu-item{border-top:1px solid var(--line)}
 
 @media(max-width:480px){
   .ob-top-hero{height:220px}
@@ -446,6 +458,16 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
   <div class="ob-hero-banner ob-top-hero">
     <img class="ob-hero-img" id="ob-hero-img-top" src="" alt="OBE's Shop">
     <div class="ob-hero-overlay"></div>
+
+    <!-- Hero ⋯ menu: Track My Order / Send Payment Proof -->
+    <div class="ob-hero-menu-wrap" id="ob-hero-menu-wrap">
+      <button class="ob-hero-menu-btn" id="ob-hero-menu-btn" aria-label="More options" type="button">⋯</button>
+      <div class="ob-hero-menu-dd" id="ob-hero-menu-dd">
+        <button type="button" class="ob-hero-menu-item" id="ob-hero-menu-track">🔎 Track My Order</button>
+        <button type="button" class="ob-hero-menu-item" id="ob-hero-menu-proof">💬 Send Payment Proof via Messenger</button>
+      </div>
+    </div>
+
     <div class="ob-hero-content">
       <div class="ob-hero-tag" id="ob-hero-tag">✦ Handcrafted with Love · Shop Online ✦</div>
       <div class="ob-hero-title"><em id="ob-hero-name">OBE's</em></div>
@@ -589,10 +611,12 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
           <div class="ob-gcash-screen"><div style="font-size:11px;color:var(--ink2);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">GCash Number</div><div class="ob-gcash-num" id="ob-gcash-number">09XX XXX XXXX</div><div class="ob-copy-row"><button class="ob-copy-btn" id="ob-copy-num">📋 Copy Number</button></div><div class="ob-gcash-name" id="ob-gcash-name-disp">Account Name</div><div class="ob-gcash-amount"><div class="ob-ga-label">Amount to Send</div><div class="ob-ga-val" id="ob-gcash-total">₱0</div></div></div>
           <div class="ob-note-box"><h4>📋 How to pay</h4><p><strong>1.</strong> Open your GCash app.<br><strong>2.</strong> Tap <em>Send Money</em> → enter the number above.<br><strong>3.</strong> Send exactly <strong id="ob-gcash-total2">₱0</strong>.<br><strong>4.</strong> Screenshot your GCash receipt.<br><strong>5.</strong> Tap below to send it to us on Messenger.</p></div>
           <a href="#" target="_blank" class="ob-messenger-btn" id="ob-messenger-btn">💬 Send Payment Proof via Messenger</a>
+          <button type="button" class="ob-track-btn-inline" id="ob-post-track-btn-gcash">🔎 Track My Order</button>
         </div>
         <div id="ob-cod-body" style="display:none">
           <div class="ob-note-box"><h4>💵 Cash on Delivery</h4><p>Please prepare <strong id="ob-cod-total">₱0</strong> in exact change. Our rider will collect upon delivery.</p></div>
           <a href="#" target="_blank" class="ob-messenger-btn" id="ob-cod-messenger-btn">💬 Message Us for Updates</a>
+          <button type="button" class="ob-track-btn-inline" id="ob-post-track-btn-cod">🔎 Track My Order</button>
         </div>
       </div>
     </div>
@@ -661,9 +685,38 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
   $('ob-banner2-btn').addEventListener('click',function(){if(BANNER2_LINK&&BANNER2_LINK!=='#'){window.open(BANNER2_LINK,'_blank');return;}var b=document.querySelector('.ob-filter-btn[data-cat="'+BANNER2_CAT+'"]');if(b)b.click();});
   window.obUpdateSummaryFromSel=function(){renderOrderSummary('ob-checkout-summary');};
 
-  function openPanel(id){$(id).classList.add('show');$('ob-overlay').classList.add('show');document.body.style.overflow='hidden';}
-  function closePanel(id){$(id).classList.remove('show');if(!document.querySelector('.ob-panel.show')){$('ob-overlay').classList.remove('show');document.body.style.overflow='';}}
-  function closeAll(){document.querySelectorAll('.ob-panel').forEach(function(p){p.classList.remove('show');});$('ob-overlay').classList.remove('show');document.body.style.overflow='';}
+  /* ── Panels: back-button fix ──
+     show/hide alone has no browser history, so the phone back button
+     used to exit the site instead of closing the panel. Fix: push a
+     fake history entry whenever a panel (or the TikTok modal) opens,
+     and close on popstate instead of navigating away. */
+  function openPanel(id){
+    $(id).classList.add('show');
+    $('ob-overlay').classList.add('show');
+    document.body.style.overflow='hidden';
+    if(!history.state||history.state.obPanel!==id){
+      history.pushState({obPanel:id},'','');
+    }
+  }
+  function closePanel(id){
+    $(id).classList.remove('show');
+    if(!document.querySelector('.ob-panel.show')&&!document.querySelector('.ob-prod-modal.show')){
+      $('ob-overlay').classList.remove('show');
+      document.body.style.overflow='';
+    }
+  }
+  function closeAll(){
+    document.querySelectorAll('.ob-panel').forEach(function(p){p.classList.remove('show');});
+    $('ob-modal').classList.remove('show');
+    $('ob-overlay').classList.remove('show');
+    document.body.style.overflow='';
+  }
+  window.addEventListener('popstate',function(event){
+    if(document.querySelector('.ob-panel.show')||document.querySelector('.ob-prod-modal.show')){
+      closeAll();
+    }
+  });
+
   function getDeliveryOption(){var s=$('ob-delivery-sel');return s?s.value:'Standard Delivery';}
   function getPaymentMethod(){var s=$('ob-pay-sel');return s?s.value:'GCash';}
 
@@ -777,6 +830,9 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
     updateModalTotal();
     $('ob-modal').classList.add('show');
     document.body.style.overflow='hidden';
+    if(!history.state||history.state.obPanel!=='ob-modal'){
+      history.pushState({obPanel:'ob-modal'},'','');
+    }
   }
 
   function closeModal(){
@@ -856,6 +912,19 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
   $('ob-track-close').addEventListener('click',closeAll);
   window.OBE_openTrack=function(){$('ob-track-ref').value='';$('ob-track-error').textContent='';$('ob-track-result').style.display='none';openPanel('ob-track-panel');};
   window.OBE_openMessenger=function(){window.open(MESSENGER_URL,'_blank');};
+
+  /* Post-order inline track buttons (GCash & COD screens) */
+  $('ob-post-track-btn-gcash').addEventListener('click',function(){closePanel('ob-pay-panel');window.OBE_openTrack();});
+  $('ob-post-track-btn-cod').addEventListener('click',function(){closePanel('ob-pay-panel');window.OBE_openTrack();});
+
+  /* Hero ⋯ menu: Track My Order / Send Payment Proof via Messenger */
+  (function(){
+    var wrap=$('ob-hero-menu-wrap'),btn=$('ob-hero-menu-btn'),dd=$('ob-hero-menu-dd');
+    btn.addEventListener('click',function(e){e.stopPropagation();dd.classList.toggle('show');});
+    document.addEventListener('click',function(e){if(!wrap.contains(e.target))dd.classList.remove('show');});
+    $('ob-hero-menu-track').addEventListener('click',function(){dd.classList.remove('show');window.OBE_openTrack();});
+    $('ob-hero-menu-proof').addEventListener('click',function(){dd.classList.remove('show');window.OBE_openMessenger();});
+  })();
 
   /* VALIDATION */
   function normalizePHPhone(raw){var digits=String(raw||'').replace(/[^\d+]/g,''),core=null;if(/^\+?63\d{10}$/.test(digits))core=digits.replace(/^\+?63/,'');else if(/^0\d{10}$/.test(digits))core=digits.slice(1);else if(/^\d{10}$/.test(digits))core=digits;if(core&&/^9\d{9}$/.test(core))return '0'+core;return null;}
