@@ -479,9 +479,9 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
     </div>
 
     <div class="ob-hero-content">
-      <div class="ob-hero-tag" id="ob-hero-tag">✦ Shop Online ✦</div>
+      <div class="ob-hero-tag" id="ob-hero-tag">✦ Handcrafted with Love · Shop Online ✦</div>
       <div class="ob-hero-title"><em id="ob-hero-name">OBE's</em></div>
-      <div class="ob-hero-sub" id="ob-hero-sub">Soap · Jewelry &amp; more · GCash or Cash</div>
+      <div class="ob-hero-sub" id="ob-hero-sub">Soap · Jewelry · Candles &amp; more · GCash or Cash</div>
       <button class="ob-hero-btn" id="ob-top-hero-btn">Shop Now</button>
     </div>
   </div>
@@ -562,11 +562,11 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
         <div style="flex:1"><label>Last Name</label><input id="ob-lname" type="text" placeholder="Santos"></div>
       </div>
       <div class="ob-error" id="ob-name-error" style="margin-top:-10px;margin-bottom:10px"></div>
-      <div class="ob-field"><label>Contact Number</label><input id="ob-contact" type="tel" placeholder="09XX XXX XXXX"><div style="font-size:11px;color:var(--ink2);margin-top:4px">GCash / Maya number you'll use to pay</div><div class="ob-error" id="ob-contact-error"></div></div>
+      <div class="ob-field"><label>Phone Number</label><input id="ob-contact" type="tel" placeholder="09XX XXX XXXX"><div style="font-size:11px;color:var(--ink2);margin-top:4px">GCash / Maya number you'll use to pay</div><div class="ob-error" id="ob-contact-error"></div></div>
       <div class="ob-field"><label>Delivery Address</label><textarea id="ob-address" rows="2" placeholder="House no., street, barangay, city"></textarea><div class="ob-error" id="ob-address-error"></div></div>
-      <div class="ob-field"><label>Delivery Option</label><div class="ob-select-wrap"><select id="ob-delivery-sel" onchange="obUpdateSummaryFromSel()"><option value="Standard Delivery">Standard Delivery</option><option value="Pick-up">🏪 Pick-up</option></select><span class="ob-select-arrow">▾</span></div></div>
+      <div class="ob-field"><label>Delivery Option</label><div class="ob-select-wrap"><select id="ob-delivery-sel" onchange="obUpdateSummaryFromSel()"><option value="Standard Delivery">Standard Delivery</option><option value="Pick-up">Pick-up</option></select><span class="ob-select-arrow">▾</span></div></div>
       <hr class="ob-div">
-      <div class="ob-field"><label>Payment Method</label><div class="ob-select-wrap"><select id="ob-pay-sel"><option value="GCash">GCash</option><option value="Cash on Delivery">💵 COD</option></select><span class="ob-select-arrow">▾</span></div><div id="ob-gcash-sub-label" style="font-size:11px;color:var(--ink2);margin-top:5px">Send to 09XX XXX XXXX</div></div>
+      <div class="ob-field"><label>Payment Method</label><div class="ob-select-wrap"><select id="ob-pay-sel"><option value="GCash">GCash</option><option value="Cash on Delivery">Cash on Delivery</option></select><span class="ob-select-arrow">▾</span></div><div id="ob-gcash-sub-label" style="font-size:11px;color:var(--ink2);margin-top:5px">Send to 09XX XXX XXXX</div></div>
       <div class="ob-field"><label>Note (optional)</label><textarea id="ob-note" rows="2" placeholder="Special instructions, gift message, etc."></textarea></div>
       <hr class="ob-div">
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:10px">Order Summary</div>
@@ -581,14 +581,14 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
     <div class="ob-panel-head"><h2>Complete Payment</h2><button class="ob-close-btn" id="ob-pay-close">✕</button></div>
     <div class="ob-panel-body">
       <div id="ob-success-banner" class="ob-success-banner" style="display:none"><div class="ob-sb-icon">✅</div><h3>Order Received!</h3><p>Your order is now logged. We'll confirm shortly.</p><div class="ob-sb-track" id="ob-tracking-no"></div></div>
-      <div id="ob-submitting" style="text-align:center;padding:32px 0"><div style="font-size:32px;margin-bottom:10px">⏳</div><p style="font-size:13px;color:var(--ink2)">Placing your order…</p></div>
+      <div id="ob-submitting" style="text-align:center;padding:32px 0"><div style="font-size:32px;margin-bottom:10px">😍</div><p style="font-size:13px;color:var(--ink2)">Placing your order…</p></div>
       <div id="ob-pay-error" class="ob-error" style="text-align:center;margin-bottom:10px"></div>
       <div id="ob-post-order" style="display:none">
         <div id="ob-gcash-body">
           <h3 style="font-family:var(--serif);font-size:20px;font-weight:500;text-align:center;margin-bottom:14px">Send Payment Now</h3>
           <div class="ob-gcash-screen"><div style="font-size:11px;color:var(--ink2);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">GCash Number</div><div class="ob-gcash-num" id="ob-gcash-number">09XX XXX XXXX</div><div class="ob-copy-row"><button class="ob-copy-btn" id="ob-copy-num">📋 Copy Number</button></div><div class="ob-gcash-name" id="ob-gcash-name-disp">Account Name</div><div class="ob-gcash-amount"><div class="ob-ga-label">Amount to Send</div><div class="ob-ga-val" id="ob-gcash-total">₱0</div></div></div>
-          <div class="ob-note-box"><h4>📋 How to pay</h4><p><strong>1.</strong> Open your GCash app.<br><strong>2.</strong> Tap <em>Send Money</em> → enter the number above.<br><strong>3.</strong> Send exactly <strong id="ob-gcash-total2">₱0</strong>.<br><strong>4.</strong> Screenshot your GCash receipt.<br><strong>5.</strong> Tap below to send it to us on Messenger.</p></div>
-          <a href="#" target="_blank" class="ob-messenger-btn" id="ob-messenger-btn">💬 Send Payment Proof</a>
+          <div class="ob-note-box"><h4>📋 How to pay</h4><p><strong>1.</strong> Open your GCash app.<br><strong>2.</strong> Tap <em>Send Money</em> → enter the number above.<br><strong>3.</strong> Send exactly <strong id="ob-gcash-total2">₱0</strong>.<br><strong>4.</strong> Screenshot your GCash receipt.<br><strong>5.</strong> Tap below to send it to us on Messenger.<br><strong>##</strong>Our system automatically detects payments, and we only process orders once payment has been received.</p></div>
+          <a href="#" target="_blank" class="ob-messenger-btn" id="ob-messenger-btn">Send Payment Proof</a>
           <button type="button" class="ob-track-btn-inline" id="ob-post-track-btn-gcash">🔎 Track My Order</button>
         </div>
         <div id="ob-cod-body" style="display:none">
@@ -635,7 +635,7 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
   var DELIVERY_FEE   = 25;
   var SERVICE_FEE    = 15;
   var MIN_ORDER_FREE = 500;
-  var BANNER_TOP_IMG = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQxGO6TudkyovrVXP96xQLErsOxULxJog3fXlaUkgnHQ&s=10';
+  var BANNER_TOP_IMG = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsb3T7wbSjvg3d6O1jROPfqM5EwT7jvDlqRgPaMkpUIg&s=10';
   var ALL_BANNERS = [];
 
   var DEMO_MENU=[
@@ -732,7 +732,7 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
       '<div class="ob-card-body">'+
         (it.category?'<div class="ob-card-cat">'+esc(it.category)+'</div>':'')+
         '<h3 class="ob-card-name">'+esc(it.item)+'</h3>'+
-        (it.description?'<div class="ob-card-desc">'+esc(it.description)+'</div>':'')+
+        (it.description?'<div class="ob-card-desc">'+esc(it.description).replace(/\n/g,'<br>')+'</div>':'')+
         '<div class="ob-card-price">₱'+it.price+'</div>'+
         '<button class="ob-card-btn">'+(it.options&&it.options.length?'Customize & Add':'Add to Cart')+'</button>'+
       '</div></div>';
@@ -825,8 +825,7 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
 
     $('ob-m-name').textContent=item.item;
     $('ob-m-price').textContent='₱'+item.price;
-    $('ob-m-desc').textContent=item.description||'';
-
+    $('ob-m-desc').innerHTML=(item.description||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
     var thumbsEl=$('ob-m-thumbs');
     if(images.length>1){
       thumbsEl.innerHTML=images.map(function(img,i){return '<div class="ob-tt-thumb'+(i===0?' active':'')+'" data-src="'+esc(img)+'"><img src="'+esc(img)+'" alt=""></div>';}).join('');
@@ -922,7 +921,7 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
     var delivery=isPickup?0:(freeD?0:DELIVERY_FEE),grandTotal=sub+delivery+SERVICE_FEE,need=(!isPickup&&!freeD)?MIN_ORDER_FREE-sub:0;
     var dRow=isPickup?'':'<div class="ob-summary-row"><span>Delivery Fee</span>'+(freeD?'<span style="color:var(--green)">FREE</span>':'<span>₱'+delivery+'</span>')+'</div>';
     $(elId).innerHTML=cart.map(function(l){return '<div class="ob-summary-row"><span>'+esc(l.item)+' ×'+l.qty+'</span><span>₱'+l.price*l.qty+'</span></div>';}).join('')+'<hr class="ob-div" style="margin:8px 0"><div class="ob-summary-row"><span>Subtotal</span><span>₱'+sub+'</span></div>'+dRow+'<div class="ob-summary-row"><span>Service Fee</span><span>₱'+SERVICE_FEE+'</span></div><div class="ob-summary-row total"><span>Total</span><span>₱'+grandTotal+'</span></div>';
-    if(elId==='ob-order-summary'){if(isPickup)$('ob-topup-notice').innerHTML='<div class="ob-topup free">🏪 Pick-up — no delivery fee!</div>';else if(!freeD)$('ob-topup-notice').innerHTML='<div class="ob-topup">🚚 Add ₱'+need+' more for <strong>FREE delivery</strong> (min. ₱'+MIN_ORDER_FREE+')</div>';else $('ob-topup-notice').innerHTML='<div class="ob-topup free">✅ You qualify for <strong>FREE delivery!</strong></div>';}
+    if(elId==='ob-order-summary'){if(isPickup)$('ob-topup-notice').innerHTML='<div class="ob-topup free">🏪 Pick-up — no delivery fee!</div>';else if(!freeD)$('ob-topup-notice').innerHTML='<div class="ob-topup">Add ₱'+need+' more for <strong>FREE delivery</strong> (min. ₱'+MIN_ORDER_FREE+')</div>';else $('ob-topup-notice').innerHTML='<div class="ob-topup free">✅ You qualify for <strong>FREE delivery!</strong></div>';}
     return{sub:sub,delivery:delivery,grandTotal:grandTotal};
   }
 
