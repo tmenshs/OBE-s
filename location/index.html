@@ -345,6 +345,16 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
 .ob-hero-menu-item:hover{background:var(--warm)}
 .ob-hero-menu-item + .ob-hero-menu-item{border-top:1px solid var(--line)}
 
+/* ── Featured Slots (Task 2) ── */
+.ob-featured-section{margin-top:32px;padding-top:20px;border-top:1px dashed var(--line)}
+.mini-product-card{display:flex;align-items:center;gap:12px;background:var(--warm);border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:10px;cursor:pointer;transition:all .15s}
+.mini-product-card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.mini-product-img{width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--gold-l)}
+.mini-product-info{flex:1;min-width:0}
+.mini-product-label{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.mini-product-name{font-family:var(--serif);font-size:15px;color:var(--ink);font-weight:500;line-height:1.2}
+.mini-product-price{font-family:var(--mono);font-size:12px;color:var(--accent);margin-top:2px}
+
 @media(max-width:480px){
   .ob-top-hero{height:220px}
   .ob-top-hero .ob-hero-title{font-size:40px}
@@ -479,41 +489,8 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
   <div class="ob-body">
     <div id="ob-status" class="ob-status"><span class="ob-status-dot"></span>Loading the shop…</div>
     <div id="ob-filter-row" class="ob-filter-row" style="display:none"></div>
-    <div id="ob-grid-top" class="ob-grid"></div>
-
-    <div class="ob-banner-row" id="ob-banner-soap" style="display:none">
-      <div class="ob-banner-soap">
-        <div class="ob-bs-img"><img id="ob-b1-img" src="https://images.unsplash.com/photo-1556228578-dd8eba76c2b0?w=600&q=80" alt=""></div>
-        <div class="ob-bs-copy">
-          <div class="ob-bs-tag" id="ob-b1-tag">✦ Bestseller · Handcrafted</div>
-          <div class="ob-bs-title" id="ob-b1-title">Glow from <em>Within.</em></div>
-          <div class="ob-bs-sub" id="ob-b1-sub">Whitening soaps made with love — shea butter, oatmeal &amp; botanical extracts.</div>
-          <button class="ob-bs-cta" id="ob-banner1-btn">Shop Soaps →</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="ob-grid-mid" class="ob-grid" style="margin-top:0"></div>
-
-    <div class="ob-banner-row" id="ob-banner-ring" style="display:none">
-      <div class="ob-banner-ring">
-        <div class="ob-br-img"><img id="ob-b2-img" src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80" alt=""></div>
-        <div class="ob-br-copy">
-          <div class="ob-br-tag" id="ob-b2-tag">✦ New Arrivals · Handcrafted</div>
-          <div class="ob-br-title" id="ob-b2-title">Wear Your <em>Story.</em></div>
-          <div class="ob-br-sub" id="ob-b2-sub">Every ring, bracelet &amp; earring is made by hand — a little piece of art you carry always.</div>
-          <div class="ob-br-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-          <button class="ob-br-cta" id="ob-banner2-btn">View Jewelry →</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="ob-section-hdr" id="ob-more-label" style="display:none">
-      <div class="ob-section-hdr-line"></div>
-      <div class="ob-section-hdr-text">More from the Shop</div>
-      <div class="ob-section-hdr-line" style="background:linear-gradient(90deg,transparent,var(--line))"></div>
-    </div>
-    <div id="ob-grid-bot" class="ob-grid"></div>
+    <div id="ob-products-feed"></div>
+    <div id="ob-featured-footer" class="ob-featured-section" style="display:none"></div>
   </div>
 
   <button id="ob-fab" class="ob-fab">🛍️ <span id="ob-fab-text">0 items</span></button>
@@ -550,6 +527,7 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
         <div class="ob-tt-price" id="ob-m-price"></div>
         <p class="ob-tt-desc" id="ob-m-desc"></p>
         <div id="ob-m-options"></div>
+        <button type="button" id="ob-m-share" style="background:transparent;border:1.5px solid rgba(255,248,238,.25);color:rgba(255,248,238,.75);border-radius:100px;padding:8px 16px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:6px">🔗 Copy Product Link</button>
       </div>
       <div class="ob-tt-actions">
         <div class="ob-tt-qty">
@@ -657,20 +635,17 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
   var DELIVERY_FEE   = 25;
   var SERVICE_FEE    = 15;
   var MIN_ORDER_FREE = 500;
-  var BANNER1_LINK   = '#';
-  var BANNER1_CAT    = 'Soap';
-  var BANNER2_LINK   = '#';
-  var BANNER2_CAT    = 'Jewelry';
   var BANNER_TOP_IMG = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsb3T7wbSjvg3d6O1jROPfqM5EwT7jvDlqRgPaMkpUIg&s=10';
+  var ALL_BANNERS = [];
 
   var DEMO_MENU=[
-    {item:'Lavender Soap Bar',category:'Soap',price:150,description:'Handmade lavender soap with shea butter and oatmeal.',image:'https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=400&q=70',images:['https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=400&q=70'],options:[{type:'pills',label:'Scent',key:'scent',choices:[{label:'Lavender',add:0},{label:'Rose',add:0},{label:'Unscented',add:-10}]},{type:'pills',label:'Size',key:'size',choices:[{label:'Small (50g)',add:0},{label:'Large (100g)',add:50}]}],linkTo:''},
-    {item:'Shea Butter Soap',category:'Soap',price:150,description:'Rich shea butter soap, gentle on all skin types.',image:'https://images.unsplash.com/photo-1583209814683-c023dd293cc6?w=400&q=70',images:['https://images.unsplash.com/photo-1583209814683-c023dd293cc6?w=400&q=70'],options:[{type:'pills',label:'Scent',key:'scent',choices:[{label:'Vanilla',add:0},{label:'Coconut',add:0},{label:'Unscented',add:-10}]}],linkTo:''},
-    {item:'Silver Ring',category:'Jewelry',price:800,description:'Handcrafted sterling silver ring, adjustable fit.',image:'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&q=70',images:['https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&q=70'],options:[{type:'pills',label:'Ring Size',key:'ringsize',choices:[{label:'5',add:0},{label:'6',add:0},{label:'7',add:0},{label:'8',add:0}]},{type:'text',label:'Engraving (optional)',key:'engraving',placeholder:'Max 10 characters'}],linkTo:''},
-    {item:'Pearl Bracelet',category:'Jewelry',price:650,description:'Freshwater pearl bracelet with gold clasp.',image:'https://images.unsplash.com/photo-1573408301185-9519f94815b8?w=400&q=70',images:['https://images.unsplash.com/photo-1573408301185-9519f94815b8?w=400&q=70'],options:[{type:'pills',label:'Size',key:'size',choices:[{label:'Small (16cm)',add:0},{label:'Medium (18cm)',add:0},{label:'Large (20cm)',add:50}]},{type:'pills',label:'Clasp Color',key:'clasp',choices:[{label:'Gold',add:0},{label:'Silver',add:0}]}],linkTo:''},
-    {item:'Lavender Candle',category:'Candles',price:220,description:'Soy wax candle with dried lavender. 40hr burn time.',image:'https://images.unsplash.com/photo-1602874801007-2426a7f5b7f0?w=400&q=70',images:['https://images.unsplash.com/photo-1602874801007-2426a7f5b7f0?w=400&q=70'],options:[{type:'pills',label:'Size',key:'size',choices:[{label:'Small (4oz)',add:0},{label:'Large (8oz)',add:100}]}],linkTo:''},
-    {item:'Rose Gold Earrings',category:'Jewelry',price:550,description:'Dainty rose gold drop earrings, hypoallergenic.',image:'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=70',images:['https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=70'],options:[{type:'pills',label:'Style',key:'style',choices:[{label:'Drop',add:0},{label:'Stud',add:-50}]}],linkTo:''},
-    {item:'Gift Set Bundle',category:'Bundles',price:500,description:'Curated gift set: 1 soap + 1 candle. Perfect for gifting.',image:'https://images.unsplash.com/photo-1512909006721-3d6018887383?w=400&q=70',images:['https://images.unsplash.com/photo-1512909006721-3d6018887383?w=400&q=70'],options:[],linkTo:''}
+    {id:'1',item:'Lavender Soap Bar',category:'Soap',price:150,description:'Handmade lavender soap with shea butter and oatmeal.',image:'https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=400&q=70',images:['https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=400&q=70'],options:[{type:'pills',label:'Scent',key:'scent',choices:[{label:'Lavender',add:0},{label:'Rose',add:0},{label:'Unscented',add:-10}]},{type:'pills',label:'Size',key:'size',choices:[{label:'Small (50g)',add:0},{label:'Large (100g)',add:50}]}],linkTo:''},
+    {id:'2',item:'Shea Butter Soap',category:'Soap',price:150,description:'Rich shea butter soap, gentle on all skin types.',image:'https://images.unsplash.com/photo-1583209814683-c023dd293cc6?w=400&q=70',images:['https://images.unsplash.com/photo-1583209814683-c023dd293cc6?w=400&q=70'],options:[{type:'pills',label:'Scent',key:'scent',choices:[{label:'Vanilla',add:0},{label:'Coconut',add:0},{label:'Unscented',add:-10}]}],linkTo:''},
+    {id:'3',item:'Silver Ring',category:'Jewelry',price:800,description:'Handcrafted sterling silver ring, adjustable fit.',image:'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&q=70',images:['https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&q=70'],options:[{type:'pills',label:'Ring Size',key:'ringsize',choices:[{label:'5',add:0},{label:'6',add:0},{label:'7',add:0},{label:'8',add:0}]},{type:'text',label:'Engraving (optional)',key:'engraving',placeholder:'Max 10 characters'}],linkTo:''},
+    {id:'4',item:'Pearl Bracelet',category:'Jewelry',price:650,description:'Freshwater pearl bracelet with gold clasp.',image:'https://images.unsplash.com/photo-1573408301185-9519f94815b8?w=400&q=70',images:['https://images.unsplash.com/photo-1573408301185-9519f94815b8?w=400&q=70'],options:[{type:'pills',label:'Size',key:'size',choices:[{label:'Small (16cm)',add:0},{label:'Medium (18cm)',add:0},{label:'Large (20cm)',add:50}]},{type:'pills',label:'Clasp Color',key:'clasp',choices:[{label:'Gold',add:0},{label:'Silver',add:0}]}],linkTo:''},
+    {id:'5',item:'Lavender Candle',category:'Candles',price:220,description:'Soy wax candle with dried lavender. 40hr burn time.',image:'https://images.unsplash.com/photo-1602874801007-2426a7f5b7f0?w=400&q=70',images:['https://images.unsplash.com/photo-1602874801007-2426a7f5b7f0?w=400&q=70'],options:[{type:'pills',label:'Size',key:'size',choices:[{label:'Small (4oz)',add:0},{label:'Large (8oz)',add:100}]}],linkTo:''},
+    {id:'6',item:'Rose Gold Earrings',category:'Jewelry',price:550,description:'Dainty rose gold drop earrings, hypoallergenic.',image:'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=70',images:['https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=70'],options:[{type:'pills',label:'Style',key:'style',choices:[{label:'Drop',add:0},{label:'Stud',add:-50}]}],linkTo:''},
+    {id:'7',item:'Gift Set Bundle',category:'Bundles',price:500,description:'Curated gift set: 1 soap + 1 candle. Perfect for gifting.',image:'https://images.unsplash.com/photo-1512909006721-3d6018887383?w=400&q=70',images:['https://images.unsplash.com/photo-1512909006721-3d6018887383?w=400&q=70'],options:[],linkTo:''}
   ];
 
   var $=function(id){return document.getElementById(id);};
@@ -680,9 +655,7 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
   $('ob-hero-img-top').src=BANNER_TOP_IMG;
   $('ob-gcash-sub-label').textContent='Send to '+GCASH_NUMBER;
 
-  $('ob-top-hero-btn').addEventListener('click',function(){$('ob-grid-top').scrollIntoView({behavior:'smooth'});});
-  $('ob-banner1-btn').addEventListener('click',function(){if(BANNER1_LINK&&BANNER1_LINK!=='#'){window.open(BANNER1_LINK,'_blank');return;}var b=document.querySelector('.ob-filter-btn[data-cat="'+BANNER1_CAT+'"]');if(b)b.click();});
-  $('ob-banner2-btn').addEventListener('click',function(){if(BANNER2_LINK&&BANNER2_LINK!=='#'){window.open(BANNER2_LINK,'_blank');return;}var b=document.querySelector('.ob-filter-btn[data-cat="'+BANNER2_CAT+'"]');if(b)b.click();});
+  $('ob-top-hero-btn').addEventListener('click',function(){$('ob-products-feed').scrollIntoView({behavior:'smooth'});});
   window.obUpdateSummaryFromSel=function(){renderOrderSummary('ob-checkout-summary');};
 
   /* ── Panels: back-button fix ──
@@ -733,46 +706,89 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
       }
       if(d.ok&&d.marketing){var m=d.marketing;
         if(m.topHeader&&m.topHeader.image)$('ob-hero-img-top').src=m.topHeader.image;
-        if(m.rowBanners&&m.rowBanners[0]){var b1=m.rowBanners[0];if(b1.image)$('ob-b1-img').src=b1.image;if(b1.tag)$('ob-b1-tag').textContent=b1.tag;if(b1.title)$('ob-b1-title').innerHTML=b1.title;if(b1.subtitle)$('ob-b1-sub').textContent=b1.subtitle;if(b1.buttonText)$('ob-banner1-btn').textContent=b1.buttonText;if(b1.linkValue&&b1.linkType==='url')BANNER1_LINK=b1.linkValue;if(b1.linkValue&&b1.linkType==='category')BANNER1_CAT=b1.linkValue;}
-        if(m.rowBanners&&m.rowBanners[1]){var b2=m.rowBanners[1];if(b2.image)$('ob-b2-img').src=b2.image;if(b2.tag)$('ob-b2-tag').textContent=b2.tag;if(b2.title)$('ob-b2-title').innerHTML=b2.title;if(b2.subtitle)$('ob-b2-sub').textContent=b2.subtitle;if(b2.buttonText)$('ob-banner2-btn').textContent=b2.buttonText;if(b2.linkValue&&b2.linkType==='url')BANNER2_LINK=b2.linkValue;if(b2.linkValue&&b2.linkType==='category')BANNER2_CAT=b2.linkValue;}
+        ALL_BANNERS = (m.rowBanners||[]).filter(function(b){return b.image;});
       }
       var menu=(d.ok&&d.menu&&d.menu.length)?d.menu:DEMO_MENU;
-      allItems=menu;renderFilter(menu);renderSplitGrids(menu);
-    }).catch(function(){$('ob-status').style.display='none';allItems=DEMO_MENU;renderFilter(DEMO_MENU);renderSplitGrids(DEMO_MENU);});
+      allItems=menu;renderFilter(menu);renderProductFeed(menu);
+      checkDirectProductLink();
+    }).catch(function(){$('ob-status').style.display='none';allItems=DEMO_MENU;renderFilter(DEMO_MENU);renderProductFeed(DEMO_MENU);checkDirectProductLink();});
   }
 
-  /* GRIDS */
-  function renderSplitGrids(items){
-    var n=PRODUCTS_PER_ROW;
-    renderGridInto('ob-grid-top',items.slice(0,n),items);
-    renderGridInto('ob-grid-mid',items.slice(n,n*2),items);
-    renderGridInto('ob-grid-bot',items.slice(n*2),items);
-    $('ob-banner-soap').style.display=items.length>n?'block':'none';
-    $('ob-banner-ring').style.display=items.length>n*2?'block':'none';
-    $('ob-more-label').style.display=items.length>n*2?'flex':'none';
+  /* TASK 1 — open modal directly if URL has ?id= */
+  function checkDirectProductLink(){
+    var params=new URLSearchParams(window.location.search);
+    var id=params.get('id');
+    if(!id)return;
+    var found=allItems.find(function(p){return String(p.id)===String(id);});
+    if(found)openModal(found);
   }
-  function renderGridInto(gridId,slice,allDisplayItems){
-    var grid=$(gridId);if(!slice.length){grid.innerHTML='';return;}
-    grid.innerHTML=slice.map(function(it){
-      return '<div class="ob-card" data-name="'+esc(it.item)+'">'+
-        '<div class="ob-card-img-wrap">'+
-          (it.image?'<img class="ob-card-img" src="'+esc(it.image)+'" alt="'+esc(it.item)+'" onerror="this.parentElement.innerHTML=\'<div class=ob-card-img-placeholder>🛍️</div>\'">':'<div class="ob-card-img-placeholder">🛍️</div>')+
-        '</div>'+
-        '<div class="ob-card-body">'+
-          (it.category?'<div class="ob-card-cat">'+esc(it.category)+'</div>':'')+
-          '<h3 class="ob-card-name">'+esc(it.item)+'</h3>'+
-          (it.description?'<div class="ob-card-desc">'+esc(it.description)+'</div>':'')+
-          '<div class="ob-card-price">₱'+it.price+'</div>'+
-          '<button class="ob-card-btn">'+(it.options&&it.options.length?'Customize & Add':'Add to Cart')+'</button>'+
-        '</div></div>';
-    }).join('');
-    grid.querySelectorAll('.ob-card').forEach(function(card){
-      var it=allDisplayItems.find(function(p){return p.item===card.dataset.name;});
+
+  /* CARD + BANNER MARKUP */
+  function cardHTML(it){
+    return '<div class="ob-card" data-name="'+esc(it.item)+'">'+
+      '<div class="ob-card-img-wrap">'+
+        (it.image?'<img class="ob-card-img" src="'+esc(it.image)+'" alt="'+esc(it.item)+'" onerror="this.parentElement.innerHTML=\'<div class=ob-card-img-placeholder>🛍️</div>\'">':'<div class="ob-card-img-placeholder">🛍️</div>')+
+      '</div>'+
+      '<div class="ob-card-body">'+
+        (it.category?'<div class="ob-card-cat">'+esc(it.category)+'</div>':'')+
+        '<h3 class="ob-card-name">'+esc(it.item)+'</h3>'+
+        (it.description?'<div class="ob-card-desc">'+esc(it.description)+'</div>':'')+
+        '<div class="ob-card-price">₱'+it.price+'</div>'+
+        '<button class="ob-card-btn">'+(it.options&&it.options.length?'Customize & Add':'Add to Cart')+'</button>'+
+      '</div></div>';
+  }
+
+  function bannerHTML(banner,idx){
+    var left=(idx%2===0);
+    var wrap=left?'ob-banner-soap':'ob-banner-ring';
+    var imgC=left?'ob-bs-img':'ob-br-img';
+    var copyC=left?'ob-bs-copy':'ob-br-copy';
+    var tagC=left?'ob-bs-tag':'ob-br-tag';
+    var titC=left?'ob-bs-title':'ob-br-title';
+    var subC=left?'ob-bs-sub':'ob-br-sub';
+    var ctaC=left?'ob-bs-cta':'ob-br-cta';
+    return '<div class="ob-banner-row"><div class="'+wrap+'">'+
+      '<div class="'+imgC+'"><img src="'+esc(banner.image)+'" alt=""></div>'+
+      '<div class="'+copyC+'">'+
+        (banner.tag?'<div class="'+tagC+'">'+esc(banner.tag)+'</div>':'')+
+        '<div class="'+titC+'">'+banner.title+'</div>'+
+        (banner.subtitle?'<div class="'+subC+'">'+esc(banner.subtitle)+'</div>':'')+
+        '<button class="'+ctaC+'" data-link-type="'+esc(banner.linkType)+'" data-link-value="'+esc(banner.linkValue)+'">'+esc(banner.buttonText||'Shop Now')+'</button>'+
+      '</div></div></div>';
+  }
+
+  /* TASK 3 — cyclic banner insertion after every N products, ALL active banners rotate */
+  function renderProductFeed(items){
+    var container=$('ob-products-feed');
+    var N=PRODUCTS_PER_ROW>0?PRODUCTS_PER_ROW:3;
+    var banners=ALL_BANNERS;
+    var html='',bannerIdx=0;
+    for(var i=0;i<items.length;i+=N){
+      var chunk=items.slice(i,i+N);
+      html+='<div class="ob-grid">'+chunk.map(cardHTML).join('')+'</div>';
+      var hasMore=(i+N)<items.length;
+      if(hasMore&&banners.length){
+        html+=bannerHTML(banners[bannerIdx%banners.length],bannerIdx);
+        bannerIdx++;
+      }
+    }
+    container.innerHTML=html;
+
+    container.querySelectorAll('.ob-card').forEach(function(card){
+      var it=items.find(function(p){return p.item===card.dataset.name;});
       if(!it)return;
       card.addEventListener('click',function(){
         var target=it;
         if(it.linkTo&&it.linkTo.trim()){var found=allItems.find(function(p){return p.item.trim().toLowerCase()===it.linkTo.trim().toLowerCase();});if(found)target=found;}
         openModal(target);
+      });
+    });
+    container.querySelectorAll('[data-link-type]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var lt=btn.dataset.linkType,lv=btn.dataset.linkValue;
+        if(lt==='url'&&lv&&lv!=='#')window.open(lv,'_blank');
+        else if(lt==='category'&&lv){var fb=document.querySelector('.ob-filter-btn[data-cat="'+lv+'"]');if(fb)fb.click();}
+        else container.scrollIntoView({behavior:'smooth'});
       });
     });
   }
@@ -790,8 +806,7 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
         $('ob-filter-row').querySelectorAll('.ob-filter-btn').forEach(function(b){b.classList.remove('active');});
         btn.classList.add('active');
         var filtered=activeCategory==='All'?allItems:allItems.filter(function(it){return it.category===activeCategory;});
-        if(activeCategory==='All')renderSplitGrids(filtered);
-        else{renderGridInto('ob-grid-top',filtered,filtered);$('ob-grid-mid').innerHTML='';$('ob-grid-bot').innerHTML='';$('ob-banner-soap').style.display='none';$('ob-banner-ring').style.display='none';$('ob-more-label').style.display='none';}
+        renderProductFeed(filtered);
       });
     });
   }
@@ -870,6 +885,17 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
 
   $('ob-m-minus').addEventListener('click',function(){if(modalQty>1)modalQty--;updateModalTotal();});
   $('ob-m-plus').addEventListener('click',function(){modalQty++;updateModalTotal();});
+
+  /* TASK 1 — copy shareable product link */
+  $('ob-m-share').addEventListener('click',function(){
+    if(!currentItem||!currentItem.id)return;
+    var url=location.origin+location.pathname+'?id='+encodeURIComponent(currentItem.id);
+    var btn=$('ob-m-share');
+    var reset=function(){btn.textContent='🔗 Copy Product Link';};
+    var done=function(){btn.textContent='✅ Link Copied!';setTimeout(reset,2000);};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(done).catch(function(){fallbackCopy(url);done();});
+    else{fallbackCopy(url);done();}
+  });
 
   $('ob-modal-atc').addEventListener('click',function(){
     var extra=getOptionsExtra(),summary=buildOptionsSummary(currentItem.options||[]);
@@ -990,9 +1016,33 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:3
     $('ob-track-result').style.display='block';
   }
 
+  /* TASK 2 — Featured Slots renderer (reusable for any placement) */
+  function renderFeatured(containerId,placement){
+    var el=$(containerId);if(!el)return;
+    fetch(API_URL+'?action=featured&placement='+encodeURIComponent(placement))
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(!d.ok||!d.items||!d.items.length){el.style.display='none';return;}
+        el.style.display='block';
+        el.innerHTML=d.items.map(function(it){
+          return '<div class="mini-product-card" data-name="'+esc(it.item)+'">'+
+            (it.image?'<img class="mini-product-img" src="'+esc(it.image)+'" alt="">':'<div class="mini-product-img"></div>')+
+            '<div class="mini-product-info">'+
+              (it.customLabel?'<div class="mini-product-label">'+esc(it.customLabel)+'</div>':'')+
+              '<div class="mini-product-name">'+esc(it.item)+'</div>'+
+              '<div class="mini-product-price">₱'+it.price+'</div>'+
+            '</div></div>';
+        }).join('');
+        el.querySelectorAll('.mini-product-card').forEach(function(card,i){
+          card.addEventListener('click',function(){openModal(d.items[i]);});
+        });
+      }).catch(function(){el.style.display='none';});
+  }
+
   function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 
   renderFab();renderCart();loadMenu();
+  renderFeatured('ob-featured-footer','contact_footer');
 })();
 </script>
 </body>
