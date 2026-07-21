@@ -161,10 +161,6 @@ body{
         <div id="ob-login-error" class="ob-error-box">Wrong email or password.</div>
 
         <div class="ob-field">
-          <label for="ob-login-code">Member ID / Access Code</label>
-          <input type="text" id="ob-login-code" placeholder="Enter your member code" autocomplete="off">
-        </div>
-        <div class="ob-field">
           <label for="ob-login-email">Email</label>
           <input type="email" id="ob-login-email" placeholder="you@example.com" autocomplete="username">
         </div>
@@ -337,17 +333,11 @@ function obSetBtnLoading(btn, loading, label){
 
 /* ---------- LOGIN ---------- */
 async function obLogin(){
-  const code = $('ob-login-code').value.trim();
   const email = $('ob-login-email').value.trim();
   const pw = $('ob-login-pw').value;
   const errBox = $('ob-login-error');
   errBox.classList.remove('show');
 
-  if(!code){
-    errBox.textContent = 'Please enter your Member ID / Access Code.';
-    errBox.classList.add('show');
-    return;
-  }
   if(!email || !pw){
     errBox.textContent = 'Please enter your email and password.';
     errBox.classList.add('show');
@@ -360,7 +350,7 @@ async function obLogin(){
   try{
     const res = await fetch(OB_API_URL, {
       method: 'POST',
-      body: JSON.stringify({ action:'login', memberCode: code, email, password: pw })
+      body: JSON.stringify({ action:'login', email, password: pw })
     });
     const data = await res.json();
     if(!data.ok){ throw new Error(data.message || 'Wrong credentials'); }
@@ -421,20 +411,21 @@ function obFakeDelay(ms){ return new Promise(r=>setTimeout(r, ms)); }
 /* ---------- SESSION ---------- */
 function obSaveSession(data){
   try{
-    sessionStorage.setItem('ob_session', JSON.stringify(data));
+    localStorage.setItem('ob_session', JSON.stringify(data));
   }catch(e){ /* storage unavailable, continue without persistence */ }
 }
 function obGetSession(){
   try{
-    const raw = sessionStorage.getItem('ob_session');
+    const raw = localStorage.getItem('ob_session');
     return raw ? JSON.parse(raw) : null;
   }catch(e){ return null; }
 }
 function obClearSession(){
-  try{ sessionStorage.removeItem('ob_session'); }catch(e){}
+  try{ localStorage.removeItem('ob_session'); }catch(e){}
 }
 
 function obLogout(){
+  obStopAutoRefresh();
   obClearSession();
   $('ob-login-email').value = '';
   $('ob-login-pw').value = '';
@@ -451,6 +442,18 @@ function obOpenDashboard(session){
 
   obShowScreen('ob-dashboard-screen');
   obRefreshDashboard();
+  obStartAutoRefresh();
+}
+
+let obAutoRefreshTimer = null;
+function obStartAutoRefresh(){
+  if(obAutoRefreshTimer) clearInterval(obAutoRefreshTimer);
+  // Poll every 20 seconds so wallet/incentive edits made in the sheet
+  // show up without the user manually refreshing the page.
+  obAutoRefreshTimer = setInterval(obRefreshDashboard, 20000);
+}
+function obStopAutoRefresh(){
+  if(obAutoRefreshTimer){ clearInterval(obAutoRefreshTimer); obAutoRefreshTimer = null; }
 }
 
 async function obRefreshDashboard(){
