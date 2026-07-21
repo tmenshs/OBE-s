@@ -738,7 +738,7 @@ $('ob-photo-input').addEventListener('change', async function(){
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', CLOUDINARY_PRESET);
-    formData.append('folder', 'obe_profiles');
+    formData.append('folder', 'loginobeuserprofile');
 
     const cdnRes  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
       method: 'POST',
