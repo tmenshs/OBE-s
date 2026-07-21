@@ -43,7 +43,51 @@ body{
   background:var(--ob-primary);color:#fff;
   display:flex;align-items:center;justify-content:center;
   font-weight:700;font-size:14px;cursor:pointer;
+  position:relative;
 }
+
+/* ---------- AVATAR DROPDOWN ---------- */
+.ob-dropdown-wrap{position:relative;}
+.ob-dropdown{
+  display:none;position:absolute;top:44px;right:0;
+  background:#fff;border:1px solid var(--ob-border);
+  border-radius:12px;box-shadow:0 8px 24px rgba(20,20,43,0.14);
+  min-width:220px;overflow:hidden;z-index:50;
+}
+.ob-dropdown.show{display:block;}
+.ob-dd-header{padding:14px 16px;border-bottom:1px solid var(--ob-border);}
+.ob-dd-name{font-weight:800;font-size:14.5px;color:var(--ob-text);}
+.ob-dd-email{font-size:12.5px;color:var(--ob-sub);margin-top:2px;word-break:break-all;}
+.ob-dd-item{
+  padding:12px 16px;font-size:14px;color:var(--ob-text);
+  cursor:pointer;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--ob-border);
+}
+.ob-dd-item:last-child{border-bottom:none;color:var(--ob-danger-text);}
+.ob-dd-item:hover{background:#f7f8fa;}
+
+/* ---------- PROFILE SCREEN ---------- */
+.ob-profile-header{
+  background:linear-gradient(135deg, var(--ob-primary-dark), var(--ob-primary));
+  border-radius:var(--ob-radius);
+  padding:28px 20px 22px;text-align:center;color:#fff;margin-bottom:16px;
+}
+.ob-profile-avatar{
+  width:76px;height:76px;border-radius:50%;
+  background:#fff;color:var(--ob-primary-dark);
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;font-weight:800;margin:0 auto 12px;
+}
+.ob-profile-name{font-size:19px;font-weight:800;}
+.ob-profile-email{font-size:13px;opacity:.9;margin-top:2px;}
+.ob-stat-row{display:flex;background:var(--ob-card);border:1px solid var(--ob-border);
+  border-radius:var(--ob-radius);box-shadow:var(--ob-shadow);margin-bottom:16px;overflow:hidden;}
+.ob-stat{flex:1;text-align:center;padding:16px 8px;}
+.ob-stat:first-child{border-right:1px solid var(--ob-border);}
+.ob-stat-amt{font-size:19px;font-weight:800;color:var(--ob-primary-dark);}
+.ob-stat-label{font-size:12px;color:var(--ob-sub);margin-top:4px;}
+.ob-back-link{display:flex;align-items:center;gap:6px;color:var(--ob-primary-dark);
+  font-weight:700;font-size:14px;cursor:pointer;margin-bottom:14px;}
 
 /* ---------- SCREENS ---------- */
 .ob-screen{display:none;padding:20px 16px 90px;}
@@ -223,7 +267,17 @@ body{
   <div id="ob-dashboard-screen" class="ob-screen">
     <div class="ob-topbar">
       <div class="ob-brand">OBE</div>
-      <div class="ob-avatar" id="ob-avatar" onclick="obLogout()" title="Logout">J</div>
+      <div class="ob-dropdown-wrap">
+        <div class="ob-avatar" id="ob-avatar" onclick="obToggleDropdown()">J</div>
+        <div class="ob-dropdown" id="ob-dropdown">
+          <div class="ob-dd-header">
+            <div class="ob-dd-name" id="ob-dd-name">—</div>
+            <div class="ob-dd-email" id="ob-dd-email">—</div>
+          </div>
+          <div class="ob-dd-item" onclick="obOpenProfile()">👤 Profile</div>
+          <div class="ob-dd-item" onclick="obLogout()">🚪 Logout</div>
+        </div>
+      </div>
     </div>
 
     <div style="padding:16px;">
@@ -269,12 +323,52 @@ body{
         <div class="ob-row"><span class="ob-row-label">Orders This Month</span><span class="ob-row-val" id="ob-a-orders">0</span></div>
         <div class="ob-row"><span class="ob-row-label">Status</span><span class="ob-row-val" id="ob-a-status">—</span></div>
       </div>
+    </div>
+  </div>
+
+  <!-- ============ PROFILE SCREEN ============ -->
+  <div id="ob-profile-screen" class="ob-screen">
+    <div class="ob-topbar">
+      <div class="ob-brand">OBE</div>
+      <div class="ob-dropdown-wrap">
+        <div class="ob-avatar" id="ob-avatar-2" onclick="obToggleDropdown('ob-dropdown-2')">J</div>
+        <div class="ob-dropdown" id="ob-dropdown-2">
+          <div class="ob-dd-header">
+            <div class="ob-dd-name" id="ob-dd-name-2">—</div>
+            <div class="ob-dd-email" id="ob-dd-email-2">—</div>
+          </div>
+          <div class="ob-dd-item" onclick="obLogout()">🚪 Logout</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:16px;">
+      <div class="ob-back-link" onclick="obShowScreen('ob-dashboard-screen')">← Back to Dashboard</div>
+
+      <div class="ob-profile-header">
+        <div class="ob-profile-avatar" id="ob-profile-avatar">J</div>
+        <div class="ob-profile-name" id="ob-profile-name">—</div>
+        <div class="ob-profile-email" id="ob-profile-email">—</div>
+      </div>
+
+      <div class="ob-stat-row">
+        <div class="ob-stat">
+          <div class="ob-stat-amt" id="ob-profile-earned">₱0.00</div>
+          <div class="ob-stat-label">Total Commission</div>
+        </div>
+        <div class="ob-stat">
+          <div class="ob-stat-amt" id="ob-profile-paid">₱0.00</div>
+          <div class="ob-stat-label">Total Payout</div>
+        </div>
+      </div>
 
       <div class="ob-section">
-        <h3>Profile</h3>
-        <div class="ob-row"><span class="ob-row-label">Name</span><span class="ob-row-val" id="ob-p-name">—</span></div>
+        <h3>Account Details</h3>
+        <div class="ob-row"><span class="ob-row-label">Full Name</span><span class="ob-row-val" id="ob-p-name">—</span></div>
         <div class="ob-row"><span class="ob-row-label">Email</span><span class="ob-row-val" id="ob-p-email">—</span></div>
         <div class="ob-row"><span class="ob-row-label">Member Since</span><span class="ob-row-val" id="ob-p-since">—</span></div>
+        <div class="ob-row"><span class="ob-row-label">Referral Code</span><span class="ob-row-val" id="ob-p-refcode">—</span></div>
+        <div class="ob-row"><span class="ob-row-label">Status</span><span class="ob-row-val" id="ob-p-status">—</span></div>
       </div>
 
       <button class="ob-logout" onclick="obLogout()">Log Out</button>
@@ -438,11 +532,38 @@ function obOpenDashboard(session){
   $('ob-p-name').textContent = session.name || '—';
   $('ob-p-email').textContent = session.email || '—';
   $('ob-p-since').textContent = session.joined || '—';
-  $('ob-avatar').textContent = (session.name || session.email || '?').trim().charAt(0).toUpperCase();
+
+  const initial = (session.name || session.email || '?').trim().charAt(0).toUpperCase();
+  $('ob-avatar').textContent = initial;
+  $('ob-avatar-2').textContent = initial;
+  $('ob-profile-avatar').textContent = initial;
+
+  $('ob-dd-name').textContent = session.name || '—';
+  $('ob-dd-email').textContent = session.email || '—';
+  $('ob-dd-name-2').textContent = session.name || '—';
+  $('ob-dd-email-2').textContent = session.email || '—';
+  $('ob-profile-name').textContent = session.name || '—';
+  $('ob-profile-email').textContent = session.email || '—';
 
   obShowScreen('ob-dashboard-screen');
   obRefreshDashboard();
   obStartAutoRefresh();
+}
+
+function obToggleDropdown(id){
+  const dd = $(id || 'ob-dropdown');
+  dd.classList.toggle('show');
+}
+
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.ob-dropdown-wrap')){
+    document.querySelectorAll('.ob-dropdown').forEach(d=>d.classList.remove('show'));
+  }
+});
+
+function obOpenProfile(){
+  document.querySelectorAll('.ob-dropdown').forEach(d=>d.classList.remove('show'));
+  obShowScreen('ob-profile-screen');
 }
 
 let obAutoRefreshTimer = null;
@@ -477,6 +598,11 @@ async function obRefreshDashboard(){
     $('ob-a-active').textContent = data.active;
     $('ob-a-orders').textContent = data.orders;
     $('ob-a-status').textContent = data.status;
+
+    $('ob-profile-earned').textContent = obPeso(data.total);
+    $('ob-profile-paid').textContent = obPeso(data.paid);
+    $('ob-p-refcode').textContent = data.refCode || '—';
+    $('ob-p-status').textContent = data.status || '—';
 
     $('ob-ref-link').value = `https://obearnings.com/?ref=${data.refCode}`;
   }catch(e){
