@@ -43,8 +43,9 @@ body{
   background:var(--ob-primary);color:#fff;
   display:flex;align-items:center;justify-content:center;
   font-weight:700;font-size:14px;cursor:pointer;
-  position:relative;
+  position:relative;overflow:hidden;
 }
+.ob-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
 
 /* ---------- AVATAR DROPDOWN ---------- */
 .ob-dropdown-wrap{position:relative;}
@@ -72,14 +73,35 @@ body{
   border-radius:var(--ob-radius);
   padding:28px 20px 22px;text-align:center;color:#fff;margin-bottom:16px;
 }
+.ob-photo-wrap{
+  position:relative;width:82px;height:82px;margin:0 auto 12px;cursor:pointer;
+}
 .ob-profile-avatar{
-  width:76px;height:76px;border-radius:50%;
+  width:82px;height:82px;border-radius:50%;
   background:#fff;color:var(--ob-primary-dark);
   display:flex;align-items:center;justify-content:center;
-  font-size:30px;font-weight:800;margin:0 auto 12px;
+  font-size:30px;font-weight:800;
+  overflow:hidden;border:3px solid rgba(255,255,255,0.5);
 }
+.ob-profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.ob-camera-btn{
+  position:absolute;bottom:2px;right:2px;
+  background:#fff;border-radius:50%;width:26px;height:26px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 1px 4px rgba(0,0,0,0.25);font-size:14px;
+  border:2px solid var(--ob-primary);
+}
+.ob-upload-progress{
+  display:none;position:absolute;inset:0;border-radius:50%;
+  background:rgba(0,0,0,0.45);align-items:center;justify-content:center;
+  color:#fff;font-size:12px;font-weight:700;
+}
+.ob-upload-progress.show{display:flex;}
+
 .ob-profile-name{font-size:19px;font-weight:800;}
 .ob-profile-email{font-size:13px;opacity:.9;margin-top:2px;}
+.ob-profile-phone{font-size:12.5px;opacity:.8;margin-top:4px;}
+
 .ob-stat-row{display:flex;background:var(--ob-card);border:1px solid var(--ob-border);
   border-radius:var(--ob-radius);box-shadow:var(--ob-shadow);margin-bottom:16px;overflow:hidden;}
 .ob-stat{flex:1;text-align:center;padding:16px 8px;}
@@ -184,16 +206,29 @@ body{
   background:#fff;color:var(--ob-danger-text);font-weight:700;font-size:14px;cursor:pointer;
 }
 
+/* ---------- PHOTO TOAST ---------- */
+.ob-toast{
+  display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:#1c2333;color:#fff;padding:10px 20px;border-radius:24px;
+  font-size:13.5px;font-weight:600;z-index:999;white-space:nowrap;
+}
+.ob-toast.show{display:block;}
+
 .ob-spinner{
   display:inline-block;width:14px;height:14px;border-radius:50%;
   border:2px solid rgba(255,255,255,.5);border-top-color:#fff;
   animation:ob-spin .7s linear infinite;vertical-align:-2px;margin-right:6px;
 }
 @keyframes ob-spin{to{transform:rotate(360deg);}}
+
+#ob-photo-input{display:none;}
 </style>
 </head>
 <body>
 <div class="ob-app">
+
+  <input type="file" id="ob-photo-input" accept="image/*">
+  <div class="ob-toast" id="ob-toast"></div>
 
   <!-- ============ LOGIN SCREEN ============ -->
   <div id="ob-login-screen" class="ob-screen show">
@@ -241,6 +276,10 @@ body{
         <div class="ob-field">
           <label for="ob-su-name">Full Name</label>
           <input type="text" id="ob-su-name" placeholder="Juan Dela Cruz">
+        </div>
+        <div class="ob-field">
+          <label for="ob-su-phone">Phone Number</label>
+          <input type="tel" id="ob-su-phone" placeholder="09XXXXXXXXX" autocomplete="tel">
         </div>
         <div class="ob-field">
           <label for="ob-su-email">Email</label>
@@ -346,9 +385,14 @@ body{
       <div class="ob-back-link" onclick="obShowScreen('ob-dashboard-screen')">← Back to Dashboard</div>
 
       <div class="ob-profile-header">
-        <div class="ob-profile-avatar" id="ob-profile-avatar">J</div>
+        <div class="ob-photo-wrap" onclick="obTriggerPhotoUpload()">
+          <div class="ob-profile-avatar" id="ob-profile-avatar">J</div>
+          <div class="ob-camera-btn">📷</div>
+          <div class="ob-upload-progress" id="ob-upload-progress">...</div>
+        </div>
         <div class="ob-profile-name" id="ob-profile-name">—</div>
         <div class="ob-profile-email" id="ob-profile-email">—</div>
+        <div class="ob-profile-phone" id="ob-profile-phone"></div>
       </div>
 
       <div class="ob-stat-row">
@@ -365,6 +409,7 @@ body{
       <div class="ob-section">
         <h3>Account Details</h3>
         <div class="ob-row"><span class="ob-row-label">Full Name</span><span class="ob-row-val" id="ob-p-name">—</span></div>
+        <div class="ob-row"><span class="ob-row-label">Phone</span><span class="ob-row-val" id="ob-p-phone">—</span></div>
         <div class="ob-row"><span class="ob-row-label">Email</span><span class="ob-row-val" id="ob-p-email">—</span></div>
         <div class="ob-row"><span class="ob-row-label">Member Since</span><span class="ob-row-val" id="ob-p-since">—</span></div>
         <div class="ob-row"><span class="ob-row-label">Referral Code</span><span class="ob-row-val" id="ob-p-refcode">—</span></div>
@@ -379,27 +424,38 @@ body{
 
 <script>
 /* =====================================================
-   OBE DASHBOARD — front-end only for now.
-   Wire this up later to your Apps Script Web App:
-   - Set OB_API_URL below to your deployed /exec URL
-   - Login   -> POST { action:'login',  memberCode, email, password }
-   - Signup  -> POST { action:'signup', memberCode, name, email, password }
-   Member Code is a gate: only people with a valid code already sitting
-   in your sheet can log in or sign up. code.gs must check memberCode
-   FIRST, before touching email/password, and return a distinct error
-   message when it's invalid so the UI can show "Invalid member code."
-   - Data    -> GET  ?action=dashboard&email=...&token=...
-   Expected login/signup response:
-     { ok:true, token:'...', name:'...', email:'...', joined:'2026-01-01' }
-   Expected dashboard response:
-     { ok:true,
-       available:0, incentives:0, total:0, paid:0,
-       refCode:'ABC123', refs:0, active:0, orders:0, status:'Active' }
+   OBE DASHBOARD
+   API: POST { action:'login', email, password }
+        POST { action:'signup', memberCode, name, phone, email, password }
+        GET  ?action=dashboard&email=...&token=...
+        POST { action:'updatePhoto', email, token, photoUrl }
+
+   Login/Signup response:
+     { ok:true, token, name, email, phone, joined }
+   Dashboard response:
+     { ok:true, available, incentives, total, paid,
+       refCode, refs, active, orders, status, photoUrl, phone }
+
+   Cloudinary config — update CLOUDINARY_CLOUD and CLOUDINARY_PRESET:
+   - Cloud name:  gzkinasn
+   - Upload preset: must be an UNSIGNED preset (create in Cloudinary settings)
    ===================================================== */
 
-const OB_API_URL = 'https://script.google.com/macros/s/AKfycbwIi-EUKPYifo9x4qLZPqNX2xaeR8cK0P0DcunXZA3U1osRujTFiJahdNag6TrkjLA/exec';
+const OB_API_URL       = 'https://script.google.com/macros/s/AKfycbwIi-EUKPYifo9x4qLZPqNX2xaeR8cK0P0DcunXZA3U1osRujTFiJahdNag6TrkjLA/exec';
+const CLOUDINARY_CLOUD  = 'gzkinasn';
+const CLOUDINARY_PRESET = 'bulletin_uploads'; // ← your unsigned preset name
 
 function $(id){ return document.getElementById(id); }
+
+/* ---- toast ---- */
+let _toastTimer;
+function obToast(msg, ms=2500){
+  const t = $('ob-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(()=>t.classList.remove('show'), ms);
+}
 
 function obShowScreen(id){
   document.querySelectorAll('.ob-screen').forEach(s=>s.classList.remove('show'));
@@ -448,7 +504,6 @@ async function obLogin(){
     });
     const data = await res.json();
     if(!data.ok){ throw new Error(data.message || 'Wrong credentials'); }
-
     obSaveSession(data);
     obOpenDashboard(data);
   }catch(e){
@@ -461,22 +516,21 @@ async function obLogin(){
 
 /* ---------- SIGN UP ---------- */
 async function obSignup(){
-  const code = $('ob-su-code').value.trim();
-  const name = $('ob-su-name').value.trim();
+  const code  = $('ob-su-code').value.trim();
+  const name  = $('ob-su-name').value.trim();
+  const phone = $('ob-su-phone').value.trim();
   const email = $('ob-su-email').value.trim();
-  const pw = $('ob-su-pw').value;
+  const pw    = $('ob-su-pw').value;
   const errBox = $('ob-signup-error');
   errBox.classList.remove('show');
 
   if(!code){
     errBox.textContent = 'Please enter your Member ID / Access Code.';
-    errBox.classList.add('show');
-    return;
+    errBox.classList.add('show'); return;
   }
-  if(!name || !email || !pw){
+  if(!name || !phone || !email || !pw){
     errBox.textContent = 'Please fill out all fields.';
-    errBox.classList.add('show');
-    return;
+    errBox.classList.add('show'); return;
   }
 
   const btn = $('ob-signup-btn');
@@ -485,11 +539,10 @@ async function obSignup(){
   try{
     const res = await fetch(OB_API_URL, {
       method: 'POST',
-      body: JSON.stringify({ action:'signup', memberCode: code, name, email, password: pw })
+      body: JSON.stringify({ action:'signup', memberCode:code, name, phone, email, password:pw })
     });
     const data = await res.json();
     if(!data.ok){ throw new Error(data.message || 'Signup failed'); }
-
     obSaveSession(data);
     obOpenDashboard(data);
   }catch(e){
@@ -500,19 +553,12 @@ async function obSignup(){
   }
 }
 
-function obFakeDelay(ms){ return new Promise(r=>setTimeout(r, ms)); }
-
 /* ---------- SESSION ---------- */
 function obSaveSession(data){
-  try{
-    localStorage.setItem('ob_session', JSON.stringify(data));
-  }catch(e){ /* storage unavailable, continue without persistence */ }
+  try{ localStorage.setItem('ob_session', JSON.stringify(data)); }catch(e){}
 }
 function obGetSession(){
-  try{
-    const raw = localStorage.getItem('ob_session');
-    return raw ? JSON.parse(raw) : null;
-  }catch(e){ return null; }
+  try{ const r=localStorage.getItem('ob_session'); return r?JSON.parse(r):null; }catch(e){ return null; }
 }
 function obClearSession(){
   try{ localStorage.removeItem('ob_session'); }catch(e){}
@@ -521,29 +567,54 @@ function obClearSession(){
 function obLogout(){
   obStopAutoRefresh();
   obClearSession();
-  $('ob-login-email').value = '';
-  $('ob-login-pw').value = '';
+  $('ob-login-email').value='';
+  $('ob-login-pw').value='';
   obShowScreen('ob-login-screen');
+}
+
+/* ---------- AVATAR HELPERS ---------- */
+function obSetAvatarPhoto(url){
+  ['ob-avatar','ob-avatar-2'].forEach(id=>{
+    const el = $(id);
+    if(!el) return;
+    if(url){
+      el.innerHTML = `<img src="${url}" alt="photo">`;
+    } else {
+      const session = obGetSession();
+      el.textContent = (session?.name||session?.email||'?').trim().charAt(0).toUpperCase();
+    }
+  });
+  const pa = $('ob-profile-avatar');
+  if(pa){
+    if(url){
+      pa.innerHTML = `<img src="${url}" alt="photo">`;
+    } else {
+      const session = obGetSession();
+      pa.textContent = (session?.name||session?.email||'?').trim().charAt(0).toUpperCase();
+    }
+  }
 }
 
 /* ---------- DASHBOARD ---------- */
 function obOpenDashboard(session){
   $('ob-dash-name').textContent = session.name || session.email;
-  $('ob-p-name').textContent = session.name || '—';
-  $('ob-p-email').textContent = session.email || '—';
-  $('ob-p-since').textContent = session.joined || '—';
+  $('ob-p-name').textContent    = session.name  || '—';
+  $('ob-p-phone').textContent   = session.phone || '—';
+  $('ob-p-email').textContent   = session.email || '—';
+  $('ob-p-since').textContent   = session.joined || '—';
 
-  const initial = (session.name || session.email || '?').trim().charAt(0).toUpperCase();
-  $('ob-avatar').textContent = initial;
-  $('ob-avatar-2').textContent = initial;
-  $('ob-profile-avatar').textContent = initial;
+  $('ob-dd-name').textContent   = session.name  || '—';
+  $('ob-dd-email').textContent  = session.email || '—';
+  $('ob-dd-name-2').textContent = session.name  || '—';
+  $('ob-dd-email-2').textContent= session.email || '—';
 
-  $('ob-dd-name').textContent = session.name || '—';
-  $('ob-dd-email').textContent = session.email || '—';
-  $('ob-dd-name-2').textContent = session.name || '—';
-  $('ob-dd-email-2').textContent = session.email || '—';
-  $('ob-profile-name').textContent = session.name || '—';
+  $('ob-profile-name').textContent  = session.name  || '—';
   $('ob-profile-email').textContent = session.email || '—';
+
+  const phoneEl = $('ob-profile-phone');
+  if(phoneEl) phoneEl.textContent = session.phone ? '📱 '+session.phone : '';
+
+  obSetAvatarPhoto(session.photoUrl || null);
 
   obShowScreen('ob-dashboard-screen');
   obRefreshDashboard();
@@ -569,65 +640,141 @@ function obOpenProfile(){
 let obAutoRefreshTimer = null;
 function obStartAutoRefresh(){
   if(obAutoRefreshTimer) clearInterval(obAutoRefreshTimer);
-  // Poll every 20 seconds so wallet/incentive edits made in the sheet
-  // show up without the user manually refreshing the page.
   obAutoRefreshTimer = setInterval(obRefreshDashboard, 20000);
 }
 function obStopAutoRefresh(){
-  if(obAutoRefreshTimer){ clearInterval(obAutoRefreshTimer); obAutoRefreshTimer = null; }
+  if(obAutoRefreshTimer){ clearInterval(obAutoRefreshTimer); obAutoRefreshTimer=null; }
 }
 
 async function obRefreshDashboard(){
   const session = obGetSession();
   if(!session) return;
 
-  $('ob-updated-time').textContent = new Date().toLocaleString('en-PH', { hour:'2-digit', minute:'2-digit', month:'short', day:'numeric' });
+  $('ob-updated-time').textContent = new Date().toLocaleString('en-PH',{hour:'2-digit',minute:'2-digit',month:'short',day:'numeric'});
 
   try{
-    const res = await fetch(`${OB_API_URL}?action=dashboard&email=${encodeURIComponent(session.email)}&token=${session.token}`);
+    const res  = await fetch(`${OB_API_URL}?action=dashboard&email=${encodeURIComponent(session.email)}&token=${session.token}`);
     const data = await res.json();
-
     if(!data.ok) return;
 
-    $('ob-w-available').textContent = obPeso(data.available);
+    $('ob-w-available').textContent  = obPeso(data.available);
     $('ob-w-incentives').textContent = obPeso(data.incentives);
-    $('ob-w-total').textContent = obPeso(data.total);
-    $('ob-w-paid').textContent = obPeso(data.paid);
+    $('ob-w-total').textContent      = obPeso(data.total);
+    $('ob-w-paid').textContent       = obPeso(data.paid);
 
-    $('ob-a-refs').textContent = data.refs;
+    $('ob-a-refs').textContent   = data.refs;
     $('ob-a-active').textContent = data.active;
     $('ob-a-orders').textContent = data.orders;
     $('ob-a-status').textContent = data.status;
 
     $('ob-profile-earned').textContent = obPeso(data.total);
-    $('ob-profile-paid').textContent = obPeso(data.paid);
-    $('ob-p-refcode').textContent = data.refCode || '—';
-    $('ob-p-status').textContent = data.status || '—';
+    $('ob-profile-paid').textContent   = obPeso(data.paid);
+    $('ob-p-refcode').textContent      = data.refCode || '—';
+    $('ob-p-status').textContent       = data.status  || '—';
 
     $('ob-ref-link').value = `https://obearnings.com/?ref=${data.refCode}`;
+
+    if(data.phone){
+      $('ob-p-phone').textContent = data.phone;
+      const phoneEl = $('ob-profile-phone');
+      if(phoneEl) phoneEl.textContent = '📱 '+data.phone;
+      const s = obGetSession();
+      if(s){ s.phone=data.phone; obSaveSession(s); }
+    }
+
+    if(data.photoUrl){
+      obSetAvatarPhoto(data.photoUrl);
+      const s = obGetSession();
+      if(s){ s.photoUrl=data.photoUrl; obSaveSession(s); }
+    }
+
   }catch(e){
     console.error('Dashboard load failed', e);
   }
 }
 
 function obPeso(n){
-  n = Number(n) || 0;
-  return '₱' + n.toLocaleString('en-PH', { minimumFractionDigits:2, maximumFractionDigits:2 });
+  n = Number(n)||0;
+  return '₱'+n.toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 
 function obCopyRefLink(){
   const input = $('ob-ref-link');
-  input.select();
-  input.setSelectionRange(0, 99999);
+  input.select(); input.setSelectionRange(0,99999);
   navigator.clipboard?.writeText(input.value).catch(()=>document.execCommand('copy'));
   const btn = $('ob-copy-btn');
   const original = btn.textContent;
-  btn.textContent = 'Copied!';
-  btn.classList.add('copied');
-  setTimeout(()=>{ btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+  btn.textContent='Copied!'; btn.classList.add('copied');
+  setTimeout(()=>{ btn.textContent=original; btn.classList.remove('copied'); },1500);
 }
 
-/* ---------- INIT: resume session if already logged in ---------- */
+/* =====================================================
+   CLOUDINARY PHOTO UPLOAD
+   ===================================================== */
+function obTriggerPhotoUpload(){
+  $('ob-photo-input').click();
+}
+
+$('ob-photo-input').addEventListener('change', async function(){
+  const file = this.files[0];
+  if(!file) return;
+
+  if(!file.type.startsWith('image/')){
+    obToast('❌ Please pick an image file.');
+    this.value = '';
+    return;
+  }
+  if(file.size > 5 * 1024 * 1024){
+    obToast('❌ Image must be under 5 MB.');
+    this.value = '';
+    return;
+  }
+
+  const progress = $('ob-upload-progress');
+  progress.textContent = '⏳';
+  progress.classList.add('show');
+
+  try{
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_PRESET);
+    formData.append('folder', 'obe_profiles');
+
+    const cdnRes  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
+      method: 'POST',
+      body: formData
+    });
+    const cdnData = await cdnRes.json();
+
+    if(!cdnData.secure_url) throw new Error(cdnData.error?.message || 'Upload failed');
+
+    const photoUrl = cdnData.secure_url;
+
+    const session = obGetSession();
+    if(session){
+      const saveRes = await fetch(OB_API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action:'updatePhoto', email:session.email, token:session.token, photoUrl })
+      });
+      const saveData = await saveRes.json();
+      if(!saveData.ok){ throw new Error(saveData.message || 'Could not save photo to your account'); }
+      session.photoUrl = photoUrl;
+      obSaveSession(session);
+    }
+
+    obSetAvatarPhoto(photoUrl);
+    obToast('✅ Photo updated!');
+
+  }catch(e){
+    console.error('Photo upload error', e);
+    obToast('❌ Upload failed: ' + (e.message || 'Try again'));
+  }finally{
+    progress.classList.remove('show');
+    this.value = '';
+  }
+});
+
+/* ---------- INIT ---------- */
 (function obInit(){
   const session = obGetSession();
   if(session){ obOpenDashboard(session); }
