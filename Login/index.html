@@ -230,7 +230,7 @@ body{
       <div class="ob-avatar" id="ob-avatar" onclick="obLogout()" title="Logout">J</div>
     </div>
 
-    <div class="ob-screen show" style="padding:16px;">
+    <div style="padding:16px;">
       <div class="ob-updated">
         Last updated: <span id="ob-updated-time">--</span>
         &nbsp;<span class="ob-refresh" onclick="obRefreshDashboard()">↻ Refresh</span>
@@ -307,7 +307,7 @@ body{
        refCode:'ABC123', refs:0, active:0, orders:0, status:'Active' }
    ===================================================== */
 
-const OB_API_URL = ''; // <-- paste your Apps Script Web App URL here later
+const OB_API_URL = 'https://script.google.com/macros/s/AKfycbwIi-EUKPYifo9x4qLZPqNX2xaeR8cK0P0DcunXZA3U1osRujTFiJahdNag6TrkjLA/exec';
 
 function $(id){ return document.getElementById(id); }
 
@@ -358,17 +358,12 @@ async function obLogin(){
   obSetBtnLoading(btn, true, 'Logging in...');
 
   try{
-    // TODO: replace with real fetch to OB_API_URL once code.gs is ready
-    // code.gs should check memberCode against the sheet BEFORE checking email/password,
-    // and reject with a distinct message (e.g. "Invalid member code") if it doesn't match.
-    // const res = await fetch(OB_API_URL, { method:'POST', body: JSON.stringify({action:'login', memberCode: code, email, password: pw}) });
-    // const data = await res.json();
-    // if(!data.ok){ throw new Error(data.message || 'Wrong credentials'); }
-
-    // ---- TEMP MOCK (remove once connected) ----
-    await obFakeDelay(600);
-    const data = { ok:true, token:'demo', name:'Jotham Jusay', email, joined:'2026-01-01' };
-    // --------------------------------------------
+    const res = await fetch(OB_API_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action:'login', memberCode: code, email, password: pw })
+    });
+    const data = await res.json();
+    if(!data.ok){ throw new Error(data.message || 'Wrong credentials'); }
 
     obSaveSession(data);
     obOpenDashboard(data);
@@ -404,18 +399,12 @@ async function obSignup(){
   obSetBtnLoading(btn, true, 'Creating account...');
 
   try{
-    // TODO: replace with real fetch to OB_API_URL once code.gs is ready
-    // code.gs should check memberCode against an allow-list sheet BEFORE creating the row,
-    // and reject with a distinct message (e.g. "Invalid member code") if it doesn't match
-    // or if that code has already been used to create an account.
-    // const res = await fetch(OB_API_URL, { method:'POST', body: JSON.stringify({action:'signup', memberCode: code, name, email, password: pw}) });
-    // const data = await res.json();
-    // if(!data.ok){ throw new Error(data.message || 'Signup failed'); }
-
-    // ---- TEMP MOCK (remove once connected) ----
-    await obFakeDelay(600);
-    const data = { ok:true, token:'demo', name, email, joined: new Date().toISOString().slice(0,10) };
-    // --------------------------------------------
+    const res = await fetch(OB_API_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action:'signup', memberCode: code, name, email, password: pw })
+    });
+    const data = await res.json();
+    if(!data.ok){ throw new Error(data.message || 'Signup failed'); }
 
     obSaveSession(data);
     obOpenDashboard(data);
@@ -471,13 +460,8 @@ async function obRefreshDashboard(){
   $('ob-updated-time').textContent = new Date().toLocaleString('en-PH', { hour:'2-digit', minute:'2-digit', month:'short', day:'numeric' });
 
   try{
-    // TODO: replace with real fetch once code.gs is ready
-    // const res = await fetch(`${OB_API_URL}?action=dashboard&email=${encodeURIComponent(session.email)}&token=${session.token}`);
-    // const data = await res.json();
-
-    // ---- TEMP MOCK (remove once connected) ----
-    const data = { ok:true, available:0, incentives:0, total:0, paid:0, refCode: session.email.split('@')[0], refs:0, active:0, orders:0, status:'Not Active' };
-    // --------------------------------------------
+    const res = await fetch(`${OB_API_URL}?action=dashboard&email=${encodeURIComponent(session.email)}&token=${session.token}`);
+    const data = await res.json();
 
     if(!data.ok) return;
 
