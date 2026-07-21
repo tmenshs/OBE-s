@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OBE Dashboard</title>
+<style>
+:root{
+  --ob-bg:#f5f7fa;
+  --ob-card:#ffffff;
+  --ob-border:#e6e9ef;
+  --ob-text:#1c2333;
+  --ob-sub:#6b7280;
+  --ob-primary:#16a34a;
+  --ob-primary-dark:#0f7d38;
+  --ob-accent1:#eef2ff; --ob-accent1-text:#4338ca;
+  --ob-accent2:#e0f2fe; --ob-accent2-text:#0369a1;
+  --ob-accent3:#dcfce7; --ob-accent3-text:#15803d;
+  --ob-accent4:#fef3c7; --ob-accent4-text:#b45309;
+  --ob-danger-bg:#fee2e2; --ob-danger-text:#b91c1c;
+  --ob-radius:16px;
+  --ob-shadow:0 2px 10px rgba(20,20,43,0.06);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--ob-bg);
+  color:var(--ob-text);
+}
+.ob-app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--ob-bg);position:relative;}
+
+/* ---------- TOP BAR ---------- */
+.ob-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  background:#fff;padding:14px 16px;
+  border-bottom:1px solid var(--ob-border);
+  position:sticky;top:0;z-index:20;
+}
+.ob-topbar .ob-brand{font-weight:800;font-size:18px;color:var(--ob-primary-dark);letter-spacing:.3px;}
+.ob-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--ob-primary);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:14px;cursor:pointer;
+}
+
+/* ---------- SCREENS ---------- */
+.ob-screen{display:none;padding:20px 16px 90px;}
+.ob-screen.show{display:block;}
+
+/* ---------- AUTH ---------- */
+.ob-auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;}
+.ob-auth-card{
+  width:100%;max-width:400px;background:var(--ob-card);
+  border-radius:var(--ob-radius);box-shadow:var(--ob-shadow);
+  padding:32px 26px;border:1px solid var(--ob-border);
+}
+.ob-auth-logo{text-align:center;font-size:22px;font-weight:800;color:var(--ob-primary-dark);margin-bottom:4px;}
+.ob-auth-sub{text-align:center;color:var(--ob-sub);font-size:14px;margin-bottom:22px;}
+.ob-field{margin-bottom:16px;}
+.ob-field label{display:block;font-size:13px;font-weight:600;color:var(--ob-text);margin-bottom:6px;}
+.ob-field input{
+  width:100%;padding:12px 14px;border-radius:10px;
+  border:1.5px solid var(--ob-border);font-size:15px;
+  background:#fbfcfe;color:var(--ob-text);outline:none;
+  transition:border-color .15s;
+}
+.ob-field input:focus{border-color:var(--ob-primary);background:#fff;}
+.ob-pw-wrap{position:relative;}
+.ob-pw-toggle{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  cursor:pointer;color:var(--ob-sub);font-size:13px;user-select:none;
+}
+.ob-error-box{
+  display:none;background:var(--ob-danger-bg);color:var(--ob-danger-text);
+  padding:10px 12px;border-radius:10px;font-size:13px;margin-bottom:16px;
+}
+.ob-error-box.show{display:block;}
+.ob-btn-primary{
+  width:100%;padding:13px;border:none;border-radius:10px;
+  background:var(--ob-primary);color:#fff;font-size:15px;font-weight:700;
+  cursor:pointer;transition:background .15s;
+}
+.ob-btn-primary:hover{background:var(--ob-primary-dark);}
+.ob-btn-primary:disabled{opacity:.6;cursor:default;}
+.ob-auth-switch{text-align:center;font-size:13.5px;color:var(--ob-sub);margin-top:18px;}
+.ob-auth-switch a{color:var(--ob-primary-dark);font-weight:700;text-decoration:none;cursor:pointer;}
+
+/* ---------- DASHBOARD ---------- */
+.ob-hello{font-size:15px;color:var(--ob-sub);margin:2px 0 2px;}
+.ob-name{font-size:20px;font-weight:800;margin-bottom:16px;}
+
+.ob-wallet-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.ob-wallet-card{
+  border-radius:14px;padding:16px 14px;
+  box-shadow:var(--ob-shadow);
+}
+.ob-wallet-card .ob-w-label{font-size:12.5px;font-weight:700;opacity:.85;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.ob-wallet-card .ob-w-amt{font-size:22px;font-weight:800;}
+.ob-w1{background:var(--ob-accent1);color:var(--ob-accent1-text);}
+.ob-w2{background:var(--ob-accent2);color:var(--ob-accent2-text);}
+.ob-w3{background:var(--ob-accent3);color:var(--ob-accent3-text);}
+.ob-w4{background:var(--ob-accent4);color:var(--ob-accent4-text);}
+
+.ob-section{
+  background:var(--ob-card);border-radius:var(--ob-radius);
+  border:1px solid var(--ob-border);box-shadow:var(--ob-shadow);
+  padding:18px 16px;margin-bottom:16px;
+}
+.ob-section h3{margin:0 0 14px;font-size:15px;font-weight:800;}
+.ob-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;border-bottom:1px solid var(--ob-border);font-size:14px;
+}
+.ob-row:last-child{border-bottom:none;}
+.ob-row .ob-row-label{color:var(--ob-sub);}
+.ob-row .ob-row-val{font-weight:700;}
+
+.ob-reflink-box{
+  display:flex;align-items:center;gap:8px;
+  background:#f8faf9;border:1.5px dashed var(--ob-primary);
+  border-radius:10px;padding:10px 12px;margin-top:4px;
+}
+.ob-reflink-box input{
+  flex:1;border:none;background:transparent;font-size:13px;color:var(--ob-text);outline:none;
+}
+.ob-copy-btn{
+  background:var(--ob-primary);color:#fff;border:none;border-radius:8px;
+  padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;
+}
+.ob-copy-btn.copied{background:var(--ob-primary-dark);}
+
+.ob-updated{text-align:right;font-size:11.5px;color:var(--ob-sub);margin-bottom:10px;}
+.ob-refresh{cursor:pointer;color:var(--ob-primary-dark);font-weight:700;}
+
+.ob-logout{
+  display:block;width:100%;text-align:center;margin-top:6px;
+  padding:12px;border-radius:10px;border:1.5px solid var(--ob-border);
+  background:#fff;color:var(--ob-danger-text);font-weight:700;font-size:14px;cursor:pointer;
+}
+
+.ob-spinner{
+  display:inline-block;width:14px;height:14px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.5);border-top-color:#fff;
+  animation:ob-spin .7s linear infinite;vertical-align:-2px;margin-right:6px;
+}
+@keyframes ob-spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="ob-app">
+
+  <!-- ============ LOGIN SCREEN ============ -->
+  <div id="ob-login-screen" class="ob-screen show">
+    <div class="ob-auth-wrap">
+      <div class="ob-auth-card">
+        <div class="ob-auth-logo">OBE</div>
+        <div class="ob-auth-sub">Sign in to your account</div>
+
+        <div id="ob-login-error" class="ob-error-box">Wrong email or password.</div>
+
+        <div class="ob-field">
+          <label for="ob-login-code">Member ID / Access Code</label>
+          <input type="text" id="ob-login-code" placeholder="Enter your member code" autocomplete="off">
+        </div>
+        <div class="ob-field">
+          <label for="ob-login-email">Email</label>
+          <input type="email" id="ob-login-email" placeholder="you@example.com" autocomplete="username">
+        </div>
+        <div class="ob-field">
+          <label for="ob-login-pw">Password</label>
+          <div class="ob-pw-wrap">
+            <input type="password" id="ob-login-pw" placeholder="••••••••" autocomplete="current-password">
+            <span class="ob-pw-toggle" onclick="obTogglePw('ob-login-pw',this)">Show</span>
+          </div>
+        </div>
+
+        <button class="ob-btn-primary" id="ob-login-btn" onclick="obLogin()">Login</button>
+
+        <div class="ob-auth-switch">
+          Don't have an account? <a onclick="obShowScreen('ob-signup-screen')">Sign Up</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SIGN UP SCREEN ============ -->
+  <div id="ob-signup-screen" class="ob-screen">
+    <div class="ob-auth-wrap">
+      <div class="ob-auth-card">
+        <div class="ob-auth-logo">OBE</div>
+        <div class="ob-auth-sub">Create your account</div>
+
+        <div id="ob-signup-error" class="ob-error-box">Something went wrong.</div>
+
+        <div class="ob-field">
+          <label for="ob-su-code">Member ID / Access Code</label>
+          <input type="text" id="ob-su-code" placeholder="Enter your member code" autocomplete="off">
+        </div>
+        <div class="ob-field">
+          <label for="ob-su-name">Full Name</label>
+          <input type="text" id="ob-su-name" placeholder="Juan Dela Cruz">
+        </div>
+        <div class="ob-field">
+          <label for="ob-su-email">Email</label>
+          <input type="email" id="ob-su-email" placeholder="you@example.com" autocomplete="username">
+        </div>
+        <div class="ob-field">
+          <label for="ob-su-pw">Password</label>
+          <div class="ob-pw-wrap">
+            <input type="password" id="ob-su-pw" placeholder="Create a password" autocomplete="new-password">
+            <span class="ob-pw-toggle" onclick="obTogglePw('ob-su-pw',this)">Show</span>
+          </div>
+        </div>
+
+        <button class="ob-btn-primary" id="ob-signup-btn" onclick="obSignup()">Sign Up</button>
+
+        <div class="ob-auth-switch">
+          Already have an account? <a onclick="obShowScreen('ob-login-screen')">Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DASHBOARD SCREEN ============ -->
+  <div id="ob-dashboard-screen" class="ob-screen">
+    <div class="ob-topbar">
+      <div class="ob-brand">OBE</div>
+      <div class="ob-avatar" id="ob-avatar" onclick="obLogout()" title="Logout">J</div>
+    </div>
+
+    <div class="ob-screen show" style="padding:16px;">
+      <div class="ob-updated">
+        Last updated: <span id="ob-updated-time">--</span>
+        &nbsp;<span class="ob-refresh" onclick="obRefreshDashboard()">↻ Refresh</span>
+      </div>
+
+      <div class="ob-hello">Welcome back,</div>
+      <div class="ob-name" id="ob-dash-name">—</div>
+
+      <div class="ob-wallet-grid">
+        <div class="ob-wallet-card ob-w1">
+          <div class="ob-w-label">💰 Available Income</div>
+          <div class="ob-w-amt" id="ob-w-available">₱0.00</div>
+        </div>
+        <div class="ob-wallet-card ob-w2">
+          <div class="ob-w-label">🎁 Incentives</div>
+          <div class="ob-w-amt" id="ob-w-incentives">₱0.00</div>
+        </div>
+        <div class="ob-wallet-card ob-w3">
+          <div class="ob-w-label">📈 Total Earned</div>
+          <div class="ob-w-amt" id="ob-w-total">₱0.00</div>
+        </div>
+        <div class="ob-wallet-card ob-w4">
+          <div class="ob-w-label">✅ Paid Out</div>
+          <div class="ob-w-amt" id="ob-w-paid">₱0.00</div>
+        </div>
+      </div>
+
+      <div class="ob-section">
+        <h3>Your Referral Link</h3>
+        <div class="ob-reflink-box">
+          <input type="text" id="ob-ref-link" readonly value="https://obearnings.com/?ref=">
+          <button class="ob-copy-btn" id="ob-copy-btn" onclick="obCopyRefLink()">Copy</button>
+        </div>
+      </div>
+
+      <div class="ob-section">
+        <h3>Activity Summary</h3>
+        <div class="ob-row"><span class="ob-row-label">Total Referrals</span><span class="ob-row-val" id="ob-a-refs">0</span></div>
+        <div class="ob-row"><span class="ob-row-label">Active This Month</span><span class="ob-row-val" id="ob-a-active">0</span></div>
+        <div class="ob-row"><span class="ob-row-label">Orders This Month</span><span class="ob-row-val" id="ob-a-orders">0</span></div>
+        <div class="ob-row"><span class="ob-row-label">Status</span><span class="ob-row-val" id="ob-a-status">—</span></div>
+      </div>
+
+      <div class="ob-section">
+        <h3>Profile</h3>
+        <div class="ob-row"><span class="ob-row-label">Name</span><span class="ob-row-val" id="ob-p-name">—</span></div>
+        <div class="ob-row"><span class="ob-row-label">Email</span><span class="ob-row-val" id="ob-p-email">—</span></div>
+        <div class="ob-row"><span class="ob-row-label">Member Since</span><span class="ob-row-val" id="ob-p-since">—</span></div>
+      </div>
+
+      <button class="ob-logout" onclick="obLogout()">Log Out</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =====================================================
+   OBE DASHBOARD — front-end only for now.
+   Wire this up later to your Apps Script Web App:
+   - Set OB_API_URL below to your deployed /exec URL
+   - Login   -> POST { action:'login',  memberCode, email, password }
+   - Signup  -> POST { action:'signup', memberCode, name, email, password }
+   Member Code is a gate: only people with a valid code already sitting
+   in your sheet can log in or sign up. code.gs must check memberCode
+   FIRST, before touching email/password, and return a distinct error
+   message when it's invalid so the UI can show "Invalid member code."
+   - Data    -> GET  ?action=dashboard&email=...&token=...
+   Expected login/signup response:
+     { ok:true, token:'...', name:'...', email:'...', joined:'2026-01-01' }
+   Expected dashboard response:
+     { ok:true,
+       available:0, incentives:0, total:0, paid:0,
+       refCode:'ABC123', refs:0, active:0, orders:0, status:'Active' }
+   ===================================================== */
+
+const OB_API_URL = ''; // <-- paste your Apps Script Web App URL here later
+
+function $(id){ return document.getElementById(id); }
+
+function obShowScreen(id){
+  document.querySelectorAll('.ob-screen').forEach(s=>s.classList.remove('show'));
+  $(id).classList.add('show');
+  $('ob-login-error').classList.remove('show');
+  $('ob-signup-error').classList.remove('show');
+}
+
+function obTogglePw(inputId, el){
+  const input = $(inputId);
+  if(input.type === 'password'){ input.type='text'; el.textContent='Hide'; }
+  else{ input.type='password'; el.textContent='Show'; }
+}
+
+function obSetBtnLoading(btn, loading, label){
+  if(loading){
+    btn.disabled = true;
+    btn.dataset.label = btn.textContent;
+    btn.innerHTML = '<span class="ob-spinner"></span>' + label;
+  } else {
+    btn.disabled = false;
+    btn.textContent = btn.dataset.label || label;
+  }
+}
+
+/* ---------- LOGIN ---------- */
+async function obLogin(){
+  const code = $('ob-login-code').value.trim();
+  const email = $('ob-login-email').value.trim();
+  const pw = $('ob-login-pw').value;
+  const errBox = $('ob-login-error');
+  errBox.classList.remove('show');
+
+  if(!code){
+    errBox.textContent = 'Please enter your Member ID / Access Code.';
+    errBox.classList.add('show');
+    return;
+  }
+  if(!email || !pw){
+    errBox.textContent = 'Please enter your email and password.';
+    errBox.classList.add('show');
+    return;
+  }
+
+  const btn = $('ob-login-btn');
+  obSetBtnLoading(btn, true, 'Logging in...');
+
+  try{
+    // TODO: replace with real fetch to OB_API_URL once code.gs is ready
+    // code.gs should check memberCode against the sheet BEFORE checking email/password,
+    // and reject with a distinct message (e.g. "Invalid member code") if it doesn't match.
+    // const res = await fetch(OB_API_URL, { method:'POST', body: JSON.stringify({action:'login', memberCode: code, email, password: pw}) });
+    // const data = await res.json();
+    // if(!data.ok){ throw new Error(data.message || 'Wrong credentials'); }
+
+    // ---- TEMP MOCK (remove once connected) ----
+    await obFakeDelay(600);
+    const data = { ok:true, token:'demo', name:'Jotham Jusay', email, joined:'2026-01-01' };
+    // --------------------------------------------
+
+    obSaveSession(data);
+    obOpenDashboard(data);
+  }catch(e){
+    errBox.textContent = e.message || 'Wrong email or password.';
+    errBox.classList.add('show');
+  }finally{
+    obSetBtnLoading(btn, false, 'Login');
+  }
+}
+
+/* ---------- SIGN UP ---------- */
+async function obSignup(){
+  const code = $('ob-su-code').value.trim();
+  const name = $('ob-su-name').value.trim();
+  const email = $('ob-su-email').value.trim();
+  const pw = $('ob-su-pw').value;
+  const errBox = $('ob-signup-error');
+  errBox.classList.remove('show');
+
+  if(!code){
+    errBox.textContent = 'Please enter your Member ID / Access Code.';
+    errBox.classList.add('show');
+    return;
+  }
+  if(!name || !email || !pw){
+    errBox.textContent = 'Please fill out all fields.';
+    errBox.classList.add('show');
+    return;
+  }
+
+  const btn = $('ob-signup-btn');
+  obSetBtnLoading(btn, true, 'Creating account...');
+
+  try{
+    // TODO: replace with real fetch to OB_API_URL once code.gs is ready
+    // code.gs should check memberCode against an allow-list sheet BEFORE creating the row,
+    // and reject with a distinct message (e.g. "Invalid member code") if it doesn't match
+    // or if that code has already been used to create an account.
+    // const res = await fetch(OB_API_URL, { method:'POST', body: JSON.stringify({action:'signup', memberCode: code, name, email, password: pw}) });
+    // const data = await res.json();
+    // if(!data.ok){ throw new Error(data.message || 'Signup failed'); }
+
+    // ---- TEMP MOCK (remove once connected) ----
+    await obFakeDelay(600);
+    const data = { ok:true, token:'demo', name, email, joined: new Date().toISOString().slice(0,10) };
+    // --------------------------------------------
+
+    obSaveSession(data);
+    obOpenDashboard(data);
+  }catch(e){
+    errBox.textContent = e.message || 'Could not create account.';
+    errBox.classList.add('show');
+  }finally{
+    obSetBtnLoading(btn, false, 'Sign Up');
+  }
+}
+
+function obFakeDelay(ms){ return new Promise(r=>setTimeout(r, ms)); }
+
+/* ---------- SESSION ---------- */
+function obSaveSession(data){
+  try{
+    sessionStorage.setItem('ob_session', JSON.stringify(data));
+  }catch(e){ /* storage unavailable, continue without persistence */ }
+}
+function obGetSession(){
+  try{
+    const raw = sessionStorage.getItem('ob_session');
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function obClearSession(){
+  try{ sessionStorage.removeItem('ob_session'); }catch(e){}
+}
+
+function obLogout(){
+  obClearSession();
+  $('ob-login-email').value = '';
+  $('ob-login-pw').value = '';
+  obShowScreen('ob-login-screen');
+}
+
+/* ---------- DASHBOARD ---------- */
+function obOpenDashboard(session){
+  $('ob-dash-name').textContent = session.name || session.email;
+  $('ob-p-name').textContent = session.name || '—';
+  $('ob-p-email').textContent = session.email || '—';
+  $('ob-p-since').textContent = session.joined || '—';
+  $('ob-avatar').textContent = (session.name || session.email || '?').trim().charAt(0).toUpperCase();
+
+  obShowScreen('ob-dashboard-screen');
+  obRefreshDashboard();
+}
+
+async function obRefreshDashboard(){
+  const session = obGetSession();
+  if(!session) return;
+
+  $('ob-updated-time').textContent = new Date().toLocaleString('en-PH', { hour:'2-digit', minute:'2-digit', month:'short', day:'numeric' });
+
+  try{
+    // TODO: replace with real fetch once code.gs is ready
+    // const res = await fetch(`${OB_API_URL}?action=dashboard&email=${encodeURIComponent(session.email)}&token=${session.token}`);
+    // const data = await res.json();
+
+    // ---- TEMP MOCK (remove once connected) ----
+    const data = { ok:true, available:0, incentives:0, total:0, paid:0, refCode: session.email.split('@')[0], refs:0, active:0, orders:0, status:'Not Active' };
+    // --------------------------------------------
+
+    if(!data.ok) return;
+
+    $('ob-w-available').textContent = obPeso(data.available);
+    $('ob-w-incentives').textContent = obPeso(data.incentives);
+    $('ob-w-total').textContent = obPeso(data.total);
+    $('ob-w-paid').textContent = obPeso(data.paid);
+
+    $('ob-a-refs').textContent = data.refs;
+    $('ob-a-active').textContent = data.active;
+    $('ob-a-orders').textContent = data.orders;
+    $('ob-a-status').textContent = data.status;
+
+    $('ob-ref-link').value = `https://obearnings.com/?ref=${data.refCode}`;
+  }catch(e){
+    console.error('Dashboard load failed', e);
+  }
+}
+
+function obPeso(n){
+  n = Number(n) || 0;
+  return '₱' + n.toLocaleString('en-PH', { minimumFractionDigits:2, maximumFractionDigits:2 });
+}
+
+function obCopyRefLink(){
+  const input = $('ob-ref-link');
+  input.select();
+  input.setSelectionRange(0, 99999);
+  navigator.clipboard?.writeText(input.value).catch(()=>document.execCommand('copy'));
+  const btn = $('ob-copy-btn');
+  const original = btn.textContent;
+  btn.textContent = 'Copied!';
+  btn.classList.add('copied');
+  setTimeout(()=>{ btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+}
+
+/* ---------- INIT: resume session if already logged in ---------- */
+(function obInit(){
+  const session = obGetSession();
+  if(session){ obOpenDashboard(session); }
+})();
+</script>
+</body>
+</html>
