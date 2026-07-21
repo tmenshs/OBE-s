@@ -100,12 +100,14 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:0
 .ob-prod-modal{
   position:fixed;inset:0;z-index:10000;
   display:none;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
 }
 .ob-prod-modal.show{display:block}
 
 /* Blurred cinematic background */
 .ob-tt-bg{
-  position:absolute;inset:0;
+  position:fixed;inset:0;z-index:0;
   background:#0a0400;
   overflow:hidden;
 }
@@ -117,7 +119,7 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:0
 
 /* X close top-right */
 .ob-tt-close{
-  position:absolute;top:16px;right:16px;z-index:4;
+  position:fixed;top:16px;right:16px;z-index:10;
   width:40px;height:40px;border-radius:50%;
   background:rgba(0,0,0,.5);backdrop-filter:blur(8px);
   border:1.5px solid rgba(255,255,255,.18);
@@ -129,7 +131,7 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:0
 
 /* Category pill top-left */
 .ob-tt-badge{
-  position:absolute;top:16px;left:16px;z-index:4;
+  position:fixed;top:16px;left:16px;z-index:10;
   font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;
   background:rgba(212,130,10,.8);backdrop-filter:blur(4px);
   color:#FFF8EE;padding:5px 13px;border-radius:100px;
@@ -138,22 +140,22 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:0
 
 /* Centered product image */
 .ob-tt-img-wrap{
-  position:absolute;inset:0;
+  position:relative;z-index:1;
+  width:100%;height:70vh;
   display:flex;align-items:center;justify-content:center;
-  padding:60px 66px 300px 12px;
-  z-index:1;
+  padding:60px 70px 24px 16px;
 }
 .ob-tt-img-wrap img{
   width:100%;height:100%;
   object-fit:contain;
-  transform:scale(1.25);
+  transform:scale(1.15);
   border-radius:14px;
   box-shadow:0 24px 64px rgba(0,0,0,.7);
 }
 
 /* Right-side thumbnail strip */
 .ob-tt-thumbs{
-  position:absolute;right:10px;top:50%;transform:translateY(-60%);
+  position:fixed;right:10px;top:35%;transform:translateY(-50%);
   z-index:3;display:flex;flex-direction:column;gap:6px;
   padding:8px 0;
 }
@@ -168,11 +170,10 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:0
 
 /* Gradient bottom sheet */
 .ob-tt-sheet{
-  position:absolute;bottom:0;left:0;right:0;z-index:2;
-  background:linear-gradient(to top,rgba(8,3,0,.98) 0%,rgba(8,3,0,.94) 65%,transparent 100%);
+  position:relative;z-index:1;
+  background:#0a0400;
   padding:28px 18px 0;
-  display:flex;flex-direction:column;
-  max-height:62%;
+  display:block;
 }
 .ob-tt-handle{
   width:36px;height:4px;border-radius:4px;
@@ -180,10 +181,8 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:0
   margin:0 auto 12px;flex-shrink:0;
 }
 .ob-tt-sheet-inner{
-  overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;
-  padding-bottom:6px;scrollbar-width:none;
+  padding-bottom:6px;
 }
-.ob-tt-sheet-inner::-webkit-scrollbar{display:none}
 .ob-tt-name{
   font-family:var(--serif);font-size:26px;font-weight:500;
   color:#FFF8EE;line-height:1.15;margin-bottom:4px;
@@ -225,9 +224,12 @@ body{font-family:'DM Sans',sans-serif;background:#FFFBF4;color:#1C1410;padding:0
 
 /* Sticky Qty + ATC bar */
 .ob-tt-actions{
-  flex-shrink:0;
-  padding:12px 0 calc(16px + env(safe-area-inset-bottom));
+  position:sticky;bottom:0;
+  background:#0a0400;
+  padding:12px 18px calc(16px + env(safe-area-inset-bottom));
+  margin:0 -18px;
   display:flex;align-items:center;gap:12px;
+  z-index:5;
 }
 .ob-tt-qty{
   display:flex;align-items:center;
@@ -374,7 +376,7 @@ body{background:#FFFBF4;}
   .ob-hero-btn{padding:12px 32px;font-size:13px}
   .ob-grid{grid-template-columns:repeat(2,1fr);gap:10px}
   .ob-card-img-wrap{height:155px}
-  .ob-tt-img-wrap{padding:72px 64px 340px 16px}
+  .ob-tt-img-wrap{height:60vh;padding:64px 60px 20px 12px}
   .ob-bs-img,.ob-br-img{width:58%}
   .ob-banner-soap,.ob-banner-ring{min-height:160px}
   .ob-bs-title,.ob-br-title{font-size:22px}
@@ -444,7 +446,10 @@ body{background:#FFFBF4;}
     <span>😍 Celebrate Christmas Sale: <span class="highlight-box">40% Off Bundle Deals</span> & Travel Incentives 😍</span>
     <span>😍 Celebrate Christmas Sale: <span class="highlight-box">40% Off Bundle Deals</span> & Travel Incentives 😍</span>
     <span>😍 Celebrate Christmas Sale: <span class="highlight-box">40% Off Bundle Deals</span> & Travel Incentives 😍</span>
-  </div>
+    <span>😍 Celebrate Christmas Sale: <span class="highlight-box">40% Off Bundle Deals</span> & Travel Incentives 😍</span>
+    <span>😍 Celebrate Christmas Sale: <span class="highlight-box">40% Off Bundle Deals</span> & Travel Incentives 😍</span>
+    <span>😍 Celebrate Christmas Sale: <span class="highlight-box">40% Off Bundle Deals</span> & Travel Incentives 😍</span>
+ </div>
 </div>
 <header style="position:fixed;top:26px;left:0;right:0;width:100%;height:68px;background:#fdf8f0;border-bottom:2px solid var(--ob-gold);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:1001;box-sizing:border-box;">
   <div id="obes-menu-btn" style="width:44px;height:44px;border-radius:8px;background:#fff;border:1.5px solid rgba(184,122,16,0.4);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s;box-shadow:0 2px 8px rgba(184,122,16,0.1);">
@@ -1227,12 +1232,12 @@ body{background:#FFFBF4;}
     <div class="ob-panel-body">
       <div class="ob-steps"><div class="ob-step done">Cart</div><div class="ob-step active">Details</div><div class="ob-step">Payment</div></div>
       <div class="ob-field" style="display:flex;gap:10px">
-        <div style="flex:1"><label>First Name</label><input id="ob-fname" type="text" placeholder="Maria"></div>
-        <div style="flex:1"><label>Last Name</label><input id="ob-lname" type="text" placeholder="Santos"></div>
+        <div style="flex:1"><label>First Name</label><input id="ob-fname" type="text" placeholder="Xyle"></div>
+        <div style="flex:1"><label>Last Name</label><input id="ob-lname" type="text" placeholder="Lremsh"></div>
       </div>
       <div class="ob-error" id="ob-name-error" style="margin-top:-10px;margin-bottom:10px"></div>
-      <div class="ob-field"><label>Phone Number</label><input id="ob-contact" type="tel" placeholder="09XX XXX XXXX"><div style="font-size:11px;color:var(--ink2);margin-top:4px">GCash / Maya number you'll use to pay</div><div class="ob-error" id="ob-contact-error"></div></div>
-      <div class="ob-field"><label>Delivery Address</label><textarea id="ob-address" rows="2" placeholder="House no., street, barangay, city"></textarea><div class="ob-error" id="ob-address-error"></div></div>
+      <div class="ob-field"><label>Phone Number</label><input id="ob-contact" type="tel" placeholder="0900 000 0000"><div style="font-size:11px;color:var(--ink2);margin-top:4px">(Number you'll use to pay)</div><div class="ob-error" id="ob-contact-error"></div></div>
+      <div class="ob-field"><label>Delivery Address</label><textarea id="ob-address" rows="2" placeholder="House no., street, brgy., city"></textarea><div class="ob-error" id="ob-address-error"></div></div>
       <div class="ob-field"><label>Delivery Option</label><div class="ob-select-wrap"><select id="ob-delivery-sel" onchange="obUpdateSummaryFromSel()"><option value="Standard Delivery">Standard Delivery</option><option value="Pick-up">Pick-up</option></select><span class="ob-select-arrow">▾</span></div></div>
       <hr class="ob-div">
       <div class="ob-field"><label>Payment Method</label><div class="ob-select-wrap"><select id="ob-pay-sel"><option value="GCash">GCash</option><option value="Cash on Delivery">Cash on Delivery</option></select><span class="ob-select-arrow">▾</span></div><div id="ob-gcash-sub-label" style="font-size:11px;color:var(--ink2);margin-top:5px">Send to 09XX XXX XXXX</div></div>
@@ -2009,6 +2014,60 @@ body{background:#FFFBF4;}
 })();
 </script>
 
+<style>
+  @keyframes obeOrbitSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes obeOrbitCounterSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(-360deg); }
+  }
+  .obe-social-orbit {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    animation: obeOrbitSpin 6s linear infinite;
+  }
+  .obe-social-orbit:hover {
+    animation-play-state: paused;
+  }
+  .obe-orbit-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    margin: -15px;
+  }
+  .obe-orbit-item:nth-child(1) { transform: rotate(0deg) translate(42px) rotate(0deg); }
+  .obe-orbit-item:nth-child(2) { transform: rotate(120deg) translate(42px) rotate(-120deg); }
+  .obe-orbit-item:nth-child(3) { transform: rotate(240deg) translate(42px) rotate(-240deg); }
+  .obe-orbit-counter {
+    width: 30px;
+    height: 30px;
+    animation: obeOrbitCounterSpin 6s linear infinite;
+  }
+  .obe-social-orbit:hover .obe-orbit-counter {
+    animation-play-state: paused;
+  }
+  .obe-social-icon {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    text-decoration: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    transition: box-shadow 0.25s ease, transform 0.2s ease;
+  }
+  .obe-social-icon:hover {
+    box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+    transform: scale(1.12);
+  }
+</style>
+
 <footer style="background:#FFFBF4;border-top:1px solid #FFE8B8;padding:50px 20px 30px;">
   <div style="max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:40px;justify-content:space-between;">
 
@@ -2023,8 +2082,8 @@ body{background:#FFFBF4;}
       <h4 style="color:#A85C00;font-size:14px;margin-bottom:14px;">Quick Links</h4>
       <div style="display:flex;flex-direction:column;gap:10px;">
         <a href="https://tmenshs.github.io/OBEs/" style="color:#5C3D1A;font-size:13px;text-decoration:none;">Home</a>
-        <a href="https://tmenshs.github.io/OBEs/menu" style="color:#5C3D1A;font-size:13px;text-decoration:none;">Shop</a>
-        <a href="https://tmenshs.github.io/OBEs/locations" style="color:#5C3D1A;font-size:13px;text-decoration:none;">Locations</a>
+        <a href="https://tmenshs.github.io/OBEs/Contact" style="color:#5C3D1A;font-size:13px;text-decoration:none;">Contact Us</a>
+        <a href="https://tmenshs.github.io/OBEs/location" style="color:#5C3D1A;font-size:13px;text-decoration:none;">Location</a>
         <a href="https://tmenshs.github.io/OBEs/our-story" style="color:#5C3D1A;font-size:13px;text-decoration:none;">Our story</a>
       </div>
     </div>
@@ -2039,22 +2098,34 @@ body{background:#FFFBF4;}
     </div>
 
     <div style="min-width:160px;">
-      <h4 style="color:#ffffff;font-size:14px;margin-bottom:14px;">Follow us on</h4>
-      <div style="display:flex;gap:10px;">
+      <h4 style="color:#A85C00;font-size:14px;margin-bottom:14px;">Follow us on</h4>
+      <div class="obe-social-orbit">
         <!-- Facebook — official blue #1877F2 -->
-        <a href="https://facebook.com/CHANGEME_OBES_FACEBOOK" target="_blank" aria-label="Facebook" style="width:30px;height:30px;border-radius:50%;background:#1877F2;display:flex;align-items:center;justify-content:center;text-decoration:none;">
-         <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.128 22 16.991 22 12z"/></svg>
-        </a>
+        <div class="obe-orbit-item">
+          <div class="obe-orbit-counter">
+            <a href="https://facebook.com/CHANGEME_OBES_FACEBOOK" target="_blank" aria-label="Facebook" class="obe-social-icon" style="background:#1877F2;">
+             <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.128 22 16.991 22 12z"/></svg>
+            </a>
+          </div>
+        </div>
         <!-- Messenger — official gradient blue/purple -->
-        <a href="https://m.me/CHANGEME_OBES_MESSENGER" target="_blank" aria-label="Messenger" style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#00B2FF,#006AFF,#B900FF);display:flex;align-items:center;justify-content:center;text-decoration:none;">
-          <svg width="16" height="16" viewBox="0 0 36 36" fill="#fff"><path d="M18 0C7.85 0 0 7.4 0 17.4c0 5.3 2.2 9.9 5.7 13v6.6l6.2-3.4c1.9.5 3.9.8 6.1.8 10.15 0 18-7.4 18-17.4S28.15 0 18 0zm1.8 23.4-4.6-4.9-9 4.9L16.4 12l4.7 4.9 8.9-4.9-10.2 11.4z"/></svg>
-        </a>
+        <div class="obe-orbit-item">
+          <div class="obe-orbit-counter">
+            <a href="https://m.me/CHANGEME_OBES_MESSENGER" target="_blank" aria-label="Messenger" class="obe-social-icon" style="background:linear-gradient(135deg,#00B2FF,#006AFF,#B900FF);">
+              <svg width="16" height="16" viewBox="0 0 36 36" fill="#fff"><path d="M18 0C7.85 0 0 7.4 0 17.4c0 5.3 2.2 9.9 5.7 13v6.6l6.2-3.4c1.9.5 3.9.8 6.1.8 10.15 0 18-7.4 18-17.4S28.15 0 18 0zm1.8 23.4-4.6-4.9-9 4.9L16.4 12l4.7 4.9 8.9-4.9-10.2 11.4z"/></svg>
+            </a>
+          </div>
+        </div>
         <!-- YouTube — official red #FF0000 -->
-        <a href="https://www.youtube.com/@OnlineBusinessesEarnings" target="_blank" aria-label="YouTube" style="width:30px;height:30px;border-radius:50%;background:#FF0000;display:flex;align-items:center;justify-content:center;text-decoration:none;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6z"/></svg>
-        </a>
+        <div class="obe-orbit-item">
+          <div class="obe-orbit-counter">
+            <a href="https://www.youtube.com/@OnlineBusinessesEarnings" target="_blank" aria-label="YouTube" class="obe-social-icon" style="background:#FF0000;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6z"/></svg>
+            </a>
+          </div>
+        </div>
       </div>
-  </div>
+    </div>
 </footer>
 
 <footer style="background:#1A0D00;color:#fff;text-align:center;padding:24px 16px;font-size:13px;">
@@ -2065,43 +2136,255 @@ body{background:#FFFBF4;}
   </p>
 </footer>
 
+<!-- ═══════════════════ TERMS OF SERVICE MODAL ═══════════════════ -->
 <div id="obe-terms-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9700;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#fff;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;border-radius:16px;padding:28px;position:relative;">
     <button onclick="document.getElementById('obe-terms-modal').style.display='none';" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;">×</button>
     <h2 style="margin-bottom:4px;color:#1A0D00;">Terms of Service</h2>
-    <p style="font-size:12px;color:#999;margin-bottom:18px;">OBE's · Last Updated: July 20, 2026</p>
+    <p style="font-size:12px;color:#999;margin-bottom:18px;">OBE's · Last Updated: July 21, 2026</p>
+
     <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">1. Acceptance of Terms</h3>
-    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">By accessing this website, placing an order, or otherwise using the services offered by OBE's ("we," "us," "our," or "the Company"), you ("customer," "user," or "you") agree to be bound by these Terms of Service ("Terms"). If you do not agree with any part of these Terms, please refrain from using our website or ordering services.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">By accessing this website, placing an order, or otherwise using the services offered by OBE's ("we," "us," "our," or "the Company"), you ("customer," "user," or "you") agree to be fully bound by these Terms of Service ("Terms") and all applicable laws and regulations. If you do not agree with any part of these Terms, you must immediately cease use of our website and refrain from placing orders through our platform.</p>
+
     <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">2. Eligibility</h3>
-    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">By placing an order, you represent that you are at least 18 years of age, or are placing an order under the supervision of a parent or legal guardian.</p>
-    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">3. Orders, Pricing, and Availability</h3>
-    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">All product descriptions, images, and prices displayed on this website are provided for informational purposes and are subject to change without prior notice. Placing an order constitutes an offer to purchase, which OBE's may accept or decline at its sole discretion.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">By placing an order, you represent and warrant that you are at least 18 years of age, or that you are placing an order under the direct supervision of a parent or legal guardian who accepts these Terms on your behalf. OBE's reserves the right to refuse service to any individual it reasonably believes does not meet this requirement, without prior notice or obligation to provide justification.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">3. Products, Pricing, and Availability</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>3.1.</strong> OBE's offers handcrafted beauty soaps, jewelry, perfumes, and related personal care products ("Products"). All product descriptions, images, ingredient listings, and prices displayed on this website are provided for informational purposes only and are subject to change at any time without prior notice.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>3.2.</strong> Product images are for illustrative purposes only. Actual product appearance, color, size, and packaging may vary due to screen display settings, handcrafted production variances, or batch differences. OBE's does not warrant that product images are a perfect representation of the physical item.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>3.3.</strong> Placing an order through our website constitutes an offer to purchase, which OBE's may accept or decline at its sole discretion — including but not limited to cases of stock unavailability, pricing errors, suspected fraudulent activity, or failure to complete payment verification.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;"><strong>3.4.</strong> OBE's is not responsible for orders that fail to reach our system due to technical errors, internet connectivity issues, or third-party service disruptions. Customers are advised to retain their order confirmation or tracking reference as proof of a successfully placed order.</p>
+
     <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">4. Payment Terms</h3>
-    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">OBE's currently accepts payment via GCash and Cash on Delivery ("COD"). Customers are responsible for sending the exact amount indicated at checkout and submitting proof of payment through the designated communication channel.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>4.1.</strong> OBE's currently accepts payment via GCash and Cash on Delivery ("COD"). Additional payment methods, if introduced, will be communicated through our website.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>4.2.</strong> For GCash payments, customers are solely responsible for sending the exact amount indicated at checkout to the official GCash number provided, and for submitting a valid proof of payment (e.g., screenshot of transaction receipt) through the designated communication channel. Orders may be delayed, held, or cancelled if payment cannot be confirmed within a reasonable period after order placement.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>4.3.</strong> For COD transactions, customers agree to have the exact payment amount ready upon delivery. OBE's and its authorized riders are not obligated to carry or provide change beyond what is reasonably practicable.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>4.4.</strong> OBE's shall not be liable for payments sent to incorrect accounts, duplicate payments, or financial losses arising from customer error in the payment process. Customers are strongly urged to verify all payment details — including the GCash number and account name — before transferring funds.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;"><strong>4.5.</strong> All GCash transactions are subject to the terms, conditions, and limitations of GCash and its parent entity, G-Xchange, Inc. OBE's has no control over and assumes no liability for the performance, security, or availability of third-party payment platforms.</p>
+
     <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">5. Delivery</h3>
-    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">Estimated delivery times are approximate and not guaranteed. Customers are responsible for providing accurate and complete delivery information.</p>
-    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">6. Cancellations and Refunds</h3>
-    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">Orders may be cancelled only before preparation has begun. Refunds are assessed at the sole discretion of OBE's on a case-by-case basis.</p>
-    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">7. Contact Information</h3>
-    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:0;">For questions regarding these Terms, please reach out to us through the contact channels provided on our website.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>5.1.</strong> Estimated delivery times provided on our platform are approximate and are not to be construed as guaranteed delivery deadlines. Actual delivery times may be affected by factors including but not limited to: traffic conditions, weather, rider availability, order volume, or other circumstances reasonably beyond our control.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>5.2.</strong> Customers bear full responsibility for providing an accurate, complete, and accessible delivery address and reachable contact number at the time of order. OBE's shall not be held liable for failed, delayed, or misdelivered orders arising from incomplete, incorrect, inaccessible, or outdated delivery information provided by the customer.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>5.3.</strong> Risk of loss and title to purchased Products passes to the customer upon successful delivery to the address or location specified, or upon pickup, as applicable. OBE's is not liable for Products that are lost, damaged, or tampered with after delivery has been completed.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;"><strong>5.4.</strong> Where a location-sharing feature is available through our platform, use of such feature is strictly voluntary. Sharing your live location is intended solely to assist the assigned rider in locating you more precisely. OBE's makes no representations regarding the accuracy, reliability, or security of GPS-based location services provided through third-party map platforms.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">6. Product Use and Disclaimer</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>6.1.</strong> OBE's Products are intended for personal, external use only, unless otherwise expressly indicated on product labeling. Customers are solely responsible for reviewing ingredient lists prior to purchase or use, particularly those with known skin sensitivities, allergies, or medical conditions.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>6.2.</strong> OBE's makes no medical claims regarding the therapeutic or clinical efficacy of its Products. Statements on our website describing product benefits are for informational purposes only and are not intended to diagnose, treat, cure, or prevent any medical condition.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;"><strong>6.3.</strong> In the event of an adverse skin reaction, customers should immediately discontinue use of the Product and consult a qualified medical professional. OBE's shall not be liable for damages arising from misuse, overuse, individual allergic reactions, or use contrary to product directions.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">7. Cancellations and Refunds</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>7.1.</strong> Orders may be cancelled only before preparation or packing has commenced. Once an order status has progressed to "Packing" or beyond, cancellation may no longer be possible, and the customer forfeits any right to a refund solely on the basis of changed preference.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>7.2.</strong> Refund requests arising from defective, damaged, or incorrect items will be reviewed and assessed at the sole discretion of OBE's on a case-by-case basis. To initiate a review, customers must contact OBE's within 48 hours of receiving the order, accompanied by clear photographic evidence of the issue.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;"><strong>7.3.</strong> OBE's expressly reserves the right to decline refund requests arising from: (a) customer-provided incorrect delivery information; (b) refusal to accept delivery without valid cause; (c) failure to be reachable at the time of delivery; (d) damage caused after delivery has been completed; or (e) change of mind after an order has been processed.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">8. Prohibited Conduct</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;">In connection with your use of OBE's website and services, you expressly agree not to:</p>
+    <ul style="font-size:13.5px;line-height:1.65;color:#444;margin:0 0 6px 18px;padding:0;">
+      <li>Submit false, fraudulent, duplicate, or malicious orders;</li>
+      <li>Use the ordering system to harass, intimidate, or inconvenience OBE's staff, riders, or other customers;</li>
+      <li>Attempt to interfere with, bypass, or gain unauthorized access to our website, ordering system, or backend infrastructure;</li>
+      <li>Use another person's personal information, payment credentials, or identity without authorization;</li>
+      <li>Engage in any conduct that could expose OBE's to legal liability or reputational harm.</li>
+    </ul>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">Violation of this section may result in immediate refusal of current and future service, forfeiture of any pending order without refund, and, where the conduct constitutes a criminal act under applicable Philippine law, referral to the appropriate authorities.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">9. Intellectual Property</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">All content on this website — including but not limited to the OBE's name, logo, product images, descriptions, designs, and copy — is the exclusive intellectual property of OBE's or its licensors and is protected under applicable copyright and trademark laws. You may not reproduce, copy, distribute, modify, or commercially exploit any content from this website without the prior written consent of OBE's.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">10. Limitation of Liability</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">To the fullest extent permitted by applicable law, OBE's shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or in connection with your use of our website, products, or services — including but not limited to loss of data, loss of revenue, or personal injury — even if OBE's has been advised of the possibility of such damages. OBE's total aggregate liability, if any, shall not exceed the amount paid by the customer for the specific order giving rise to the claim.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">11. Governing Law</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">These Terms shall be governed by and construed in accordance with the laws of the Republic of the Philippines. Any dispute arising from or relating to these Terms or your use of OBE's services shall be subject to the exclusive jurisdiction of the competent courts of the Philippines, without prejudice to OBE's right to seek injunctive or other equitable relief in any court of competent jurisdiction.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">12. Amendments</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">OBE's reserves the right to modify or replace these Terms at any time without prior notice. Material changes will be reflected by an updated "Last Updated" date at the top of this document. Your continued use of our website or services after any such changes constitutes your acceptance of the revised Terms.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">13. Contact Information</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:0;">For questions, concerns, or notices regarding these Terms of Service, please contact OBE's through the official communication channels provided on our website. We aim to respond to all inquiries within a reasonable time.</p>
   </div>
 </div>
 
+<!-- ═══════════════════ PRIVACY POLICY MODAL ═══════════════════ -->
 <div id="obe-privacy-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9700;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#fff;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;border-radius:16px;padding:28px;position:relative;">
     <button onclick="document.getElementById('obe-privacy-modal').style.display='none';" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;">×</button>
     <h2 style="margin-bottom:4px;color:#1A0D00;">Privacy Policy</h2>
-    <p style="font-size:12px;color:#999;margin-bottom:18px;">OBE's · Last Updated: July 20, 2026</p>
+    <p style="font-size:12px;color:#999;margin-bottom:18px;">OBE's · Last Updated: July 21, 2026</p>
+
     <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">1. Introduction</h3>
-    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">OBE's ("we," "us," "our," or "the Company") respects your privacy and is committed to protecting your personal data, consistent with the Data Privacy Act of 2012 (Republic Act No. 10173) of the Philippines.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">OBE's ("we," "us," "our," or "the Company") is committed to protecting your personal data and respecting your privacy rights. This Privacy Policy describes how we collect, use, store, share, and protect information obtained in connection with your use of our website and services, in accordance with the Data Privacy Act of 2012 (Republic Act No. 10173) of the Republic of the Philippines and its Implementing Rules and Regulations. By using our website or placing an order, you acknowledge that you have read and understood this Privacy Policy.</p>
+
     <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">2. Information We Collect</h3>
-    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">We collect only the information reasonably necessary to process, fulfill, and support your order: name, contact number, delivery address, and payment reference.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">We collect only the information that is reasonably necessary to process, fulfill, and support your order, as summarized below:</p>
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px;line-height:1.5;color:#444;margin-bottom:10px;">
+      <thead>
+        <tr style="background:#FBEAEA;">
+          <th style="text-align:left;padding:8px 10px;border:1px solid #eecccc;color:#1A0D00;">Category</th>
+          <th style="text-align:left;padding:8px 10px;border:1px solid #eecccc;color:#1A0D00;">Examples</th>
+          <th style="text-align:left;padding:8px 10px;border:1px solid #eecccc;color:#1A0D00;">Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Identity information</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;">Full name</td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Order identification and personalization</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Contact information</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;">Mobile/contact number, messenger handle</td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Delivery coordination, order updates, payment confirmation</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Delivery information</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;">Delivery address, rider notes</td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Fulfilling and delivering your order</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Payment information</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;">Payment method (e.g., GCash), payment reference</td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Order processing and confirmation (we do not store GCash credentials or full account details)</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Location information</strong> <span style="color:#999;">(optional)</span></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;">GPS coordinates, if "Share My Live Location" is used</td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Helping your assigned rider locate you more accurately</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Order information</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;">Items purchased, order amount, status history</td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Fulfillment, records, and customer support</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Technical data</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;">Device/browser type, general usage data</td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Website performance and security</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">OBE's does not collect sensitive personal information as defined under the Data Privacy Act of 2012 — such as government-issued identification numbers, health records, or full financial account details — beyond what is strictly required for payment confirmation.</p>
+
     <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">3. How We Use Your Information</h3>
-    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">We use your information solely to process orders, coordinate delivery, confirm payment, and respond to inquiries. We do not sell or trade your personal information.</p>
-    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">4. Your Rights</h3>
-    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">You have the right to access, correct, or request deletion of your personal data, and to lodge a complaint with the National Privacy Commission.</p>
-    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">5. Contact Us</h3>
-    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:0;">If you have questions regarding this Privacy Policy, please reach out through the contact channels on our website.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">We use the personal information collected solely for the following legitimate business purposes:</p>
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px;line-height:1.5;color:#444;margin-bottom:10px;">
+      <thead>
+        <tr style="background:#FBEAEA;">
+          <th style="text-align:left;padding:8px 10px;border:1px solid #eecccc;color:#1A0D00;">Purpose</th>
+          <th style="text-align:left;padding:8px 10px;border:1px solid #eecccc;color:#1A0D00;">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Order fulfillment</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Processing, preparing, packing, and delivering your order</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Payment verification</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Confirming and reconciling payment receipt</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Delivery coordination</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Sharing address and, if voluntarily provided, live location with your assigned rider</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Operational alerts</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Sending order status notifications to our internal team (e.g., via Telegram)</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Customer support</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Responding to inquiries, complaints, and refund requests</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Recordkeeping</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Maintaining accurate business records for accounting and legal compliance</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Service improvement</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Improving product quality, services, and website functionality</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Legal compliance</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Complying with applicable laws, court orders, or regulatory requirements</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">OBE's does not use your personal information for unsolicited commercial marketing, profiling, or automated decision-making without your prior consent, and does not sell, rent, or trade your personal information to third parties for their own marketing purposes.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">4. Location Data</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>4.1.</strong> Where available through our platform, the option to share your live GPS location is entirely voluntary. It is provided solely as a convenience feature to enable your assigned rider to locate you more accurately than a typed address may allow.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;"><strong>4.2.</strong> Location data, when shared, is associated with the specific order record and is disclosed only to OBE's internal operations team and the assigned rider for the sole purpose of completing your delivery. Location data is not used for tracking, profiling, or any purpose unrelated to the delivery of your order.</p>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;"><strong>4.3.</strong> You may decline to share your location at any time. Declining will not prevent you from placing or receiving an order; delivery will proceed using the typed address you provided.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">5. How We Share Your Information</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">We disclose your personal information only to the following categories of recipients, strictly as necessary to fulfill the stated purposes:</p>
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px;line-height:1.5;color:#444;margin-bottom:10px;">
+      <thead>
+        <tr style="background:#FBEAEA;">
+          <th style="text-align:left;padding:8px 10px;border:1px solid #eecccc;color:#1A0D00;">Recipient</th>
+          <th style="text-align:left;padding:8px 10px;border:1px solid #eecccc;color:#1A0D00;">Data Shared</th>
+          <th style="text-align:left;padding:8px 10px;border:1px solid #eecccc;color:#1A0D00;">Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Delivery riders</strong></td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;">Name, contact number, address, live location (if shared)</td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Completing delivery</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Payment platforms</strong><br>(e.g., GCash / G-Xchange, Inc.)</td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;">Payment reference only — full credentials never received</td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Processing and confirming payment</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Internal notification tools</strong><br>(e.g., Telegram)</td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;">Order summary and status</td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Real-time order alerts to our team</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #eecccc;"><strong>Service infrastructure providers</strong><br>(e.g., Google Sheets, Apps Script, Google Maps)</td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;">Order and location data as applicable</td>
+          <td style="padding:8px 10px;border:1px solid #eecccc;color:#8a5a00;">Backend storage, processing, and map display (governed by Google LLC's own privacy policy)</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">OBE's does not share your personal information with any third party for their own independent marketing, advertising, profiling, or resale purposes without your explicit consent.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">6. Data Retention</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">We retain your personal information and associated order records for as long as reasonably necessary to fulfill the purposes described in this Policy, to maintain accurate business records, and to comply with applicable tax, accounting, or legal obligations under Philippine law. Where retention is no longer necessary, we take reasonable steps to securely dispose of or anonymize the data. You may request deletion of your personal data at any time, subject to the limitations described in Section 8 below.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">7. Data Security</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">We implement reasonable administrative, technical, and organizational security measures designed to protect your personal information against unauthorized access, disclosure, alteration, loss, or destruction. These measures include access controls, data minimization practices, and use of secure third-party infrastructure. However, no method of electronic transmission or storage is entirely immune from security risks, and OBE's cannot guarantee absolute security. In the event of a personal data breach that may affect your rights and freedoms, we will notify the National Privacy Commission and affected individuals as required by law.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">8. Your Rights as a Data Subject</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:6px;">Under the Data Privacy Act of 2012 and its Implementing Rules, you are entitled to the following rights with respect to your personal data:</p>
+    <ul style="font-size:13.5px;line-height:1.65;color:#444;margin:0 0 6px 18px;padding:0;">
+      <li><strong>Right to be Informed</strong> — to know how your personal data is collected, processed, stored, and used;</li>
+      <li><strong>Right of Access</strong> — to obtain a copy of the personal data we hold about you;</li>
+      <li><strong>Right to Rectification</strong> — to request correction of inaccurate, incomplete, or outdated personal data;</li>
+      <li><strong>Right to Erasure or Blocking</strong> — to request deletion or restriction of processing of your personal data, subject to legal or legitimate business retention requirements;</li>
+      <li><strong>Right to Object</strong> — to object to certain processing of your personal data based on legitimate interests;</li>
+      <li><strong>Right to Data Portability</strong> — to receive your personal data in a structured, commonly used format, where technically feasible;</li>
+      <li><strong>Right to Lodge a Complaint</strong> — to file a complaint with the National Privacy Commission (NPC) if you believe your rights under the Data Privacy Act have been violated.</li>
+    </ul>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">To exercise any of these rights, please contact us through the official communication channels provided on our website. We will respond to all verified requests within a reasonable period, and in no event later than the timeframe required by applicable law.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">9. Children's Privacy</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">Our services are not directed at individuals under the age of 18, and we do not knowingly collect personal information from minors without the involvement of a parent or legal guardian, consistent with our Terms of Service. If we become aware that we have inadvertently collected personal information from a minor, we will take immediate steps to delete such information from our records.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">10. Third-Party Links and Services</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">Our website and ordering system may contain links to, or integrate with, third-party platforms including but not limited to GCash, Google Maps, Telegram, and Facebook Messenger. This Privacy Policy applies exclusively to information processed by OBE's. We are not responsible for the privacy practices or content of third-party platforms, and we encourage you to review the applicable privacy policies of any third-party service you use in connection with our platform.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">11. Cookies and Analytics</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">Our website may use cookies or similar tracking technologies for basic functionality and to collect aggregated, anonymized usage data to help us understand how visitors interact with our website. We do not use cookies for targeted advertising. You may configure your browser to refuse cookies; however, doing so may affect certain features of our website.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">12. Changes to This Privacy Policy</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:10px;">We reserve the right to update or revise this Privacy Policy at any time to reflect changes in our data practices, technology, legal obligations, or business operations. Material changes will be reflected by an updated "Last Updated" date at the top of this Policy. Your continued use of our website or services following any such changes constitutes your acceptance of the revised Privacy Policy. We encourage you to review this page periodically to stay informed of how we protect your information.</p>
+
+    <h3 style="font-size:14px;color:#1A0D00;margin:16px 0 6px;">13. Contact Us</h3>
+    <p style="font-size:13.5px;line-height:1.65;color:#444;margin-bottom:0;">If you have any questions, concerns, or requests regarding this Privacy Policy or how your personal information is collected and handled, please contact OBE's through the official communication channels provided on our website. We take all privacy-related inquiries seriously and are committed to responding promptly and transparently.</p>
   </div>
 </div>
 </body>
