@@ -169,6 +169,24 @@ body{
 .ob-w3{background:var(--ob-accent3);color:var(--ob-accent3-text);}
 .ob-w4{background:var(--ob-accent4);color:var(--ob-accent4-text);}
 
+/* ---------- CASH OUT (NEW) ---------- */
+.ob-cashout-btn{
+  width:100%;padding:14px;border:none;border-radius:14px;
+  background:var(--ob-primary);color:#fff;font-size:15px;font-weight:800;
+  cursor:pointer;transition:background .15s;margin-bottom:18px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:var(--ob-shadow);
+}
+.ob-cashout-btn:hover{background:var(--ob-primary-dark);}
+.ob-cashout-btn:disabled{
+  background:#d1d5db;color:#9ca3af;cursor:default;box-shadow:none;
+}
+.ob-cashout-status{
+  text-align:center;font-size:12.5px;color:var(--ob-sub);
+  margin:-10px 0 18px;
+}
+.ob-cashout-status.pending{color:var(--ob-accent4-text);font-weight:700;}
+
 .ob-section{
   background:var(--ob-card);border-radius:var(--ob-radius);
   border:1px solid var(--ob-border);box-shadow:var(--ob-shadow);
@@ -325,27 +343,35 @@ body{
         &nbsp;<span class="ob-refresh" onclick="obRefreshDashboard()">↻ Refresh</span>
       </div>
 
-      <div class="ob-hello">Welcome back,</div>
+      <!-- NEW: id added so this text can be swapped from Settings sheet -->
+      <div class="ob-hello" id="ob-hello-label">Welcome back,</div>
       <div class="ob-name" id="ob-dash-name">—</div>
 
       <div class="ob-wallet-grid">
         <div class="ob-wallet-card ob-w1">
-          <div class="ob-w-label">💰 Available Income</div>
+          <!-- NEW: id added to each label span for Settings binding -->
+          <div class="ob-w-label">💰 <span id="ob-label-available">Available Income</span></div>
           <div class="ob-w-amt" id="ob-w-available">₱0.00</div>
         </div>
         <div class="ob-wallet-card ob-w2">
-          <div class="ob-w-label">🎁 Incentives</div>
+          <div class="ob-w-label">🎁 <span id="ob-label-incentives">Incentives</span></div>
           <div class="ob-w-amt" id="ob-w-incentives">₱0.00</div>
         </div>
         <div class="ob-wallet-card ob-w3">
-          <div class="ob-w-label">📈 Total Earned</div>
+          <div class="ob-w-label">📈 <span id="ob-label-total">Total Earned</span></div>
           <div class="ob-w-amt" id="ob-w-total">₱0.00</div>
         </div>
         <div class="ob-wallet-card ob-w4">
-          <div class="ob-w-label">✅ Paid Out</div>
+          <div class="ob-w-label">✅ <span id="ob-label-paid">Paid Out</span></div>
           <div class="ob-w-amt" id="ob-w-paid">₱0.00</div>
         </div>
       </div>
+
+      <!-- ============ CASH OUT (NEW) ============ -->
+      <button class="ob-cashout-btn" id="ob-cashout-btn" onclick="obRequestCashOut()">
+        💸 <span id="ob-label-cashout">Cash Out</span>
+      </button>
+      <div class="ob-cashout-status" id="ob-cashout-status"></div>
 
       <div class="ob-section">
         <h3>Your Referral Link</h3>
@@ -429,12 +455,18 @@ body{
         POST { action:'signup', memberCode, name, phone, email, password }
         GET  ?action=dashboard&email=...&token=...
         POST { action:'updatePhoto', email, token, photoUrl }
+        POST { action:'requestCashOut', email, token }                 // NEW
 
    Login/Signup response:
      { ok:true, token, name, email, phone, joined }
    Dashboard response:
-     { ok:true, available, incentives, total, paid,
-       refCode, refs, active, orders, status, photoUrl, phone }
+     { ok:true, available, incentives, total, paid, cashOutStatus,     // NEW: cashOutStatus
+       refCode, refs, active, orders, status, photoUrl, phone, settings } // NEW: settings
+
+   settings object (from the Settings sheet, all optional — code falls back
+   to the hardcoded defaults already in the HTML if a key is missing):
+     { DashboardTitle, Label_Available, Label_Incentives,
+       Label_Total, Label_Paid, Label_CashOut }
 
    Referral base URL: https://tmenshs.github.io/OBEs/Login/
    (matches the live GitHub Pages site — update here if the domain changes)
@@ -599,6 +631,29 @@ function obSetAvatarPhoto(url){
   }
 }
 
+/* ---------- LABEL BINDING (NEW) ----------
+   Applies label/title text from the Settings sheet (data.settings) if
+   present, otherwise leaves whatever is already hardcoded in the HTML
+   untouched. This is what makes titles/labels editable from the
+   spreadsheet instead of requiring an HTML edit. */
+function obApplySettings(settings){
+  if(!settings) return;
+  const map = {
+    'ob-hello-label':    settings.DashboardTitle,
+    'ob-label-available':settings.Label_Available,
+    'ob-label-incentives':settings.Label_Incentives,
+    'ob-label-total':    settings.Label_Total,
+    'ob-label-paid':     settings.Label_Paid,
+    'ob-label-cashout':  settings.Label_CashOut
+  };
+  Object.entries(map).forEach(([id, val]) => {
+    if(val){ // only overwrite if the Settings sheet actually has a value for this key
+      const el = $(id);
+      if(el) el.textContent = val;
+    }
+  });
+}
+
 /* ---------- DASHBOARD ---------- */
 function obOpenDashboard(session){
   $('ob-dash-name').textContent = session.name || session.email;
@@ -650,6 +705,11 @@ function obStopAutoRefresh(){
   if(obAutoRefreshTimer){ clearInterval(obAutoRefreshTimer); obAutoRefreshTimer=null; }
 }
 
+/* Keeps the last known available balance + cash-out status in module scope
+   so obRequestCashOut() can check them without an extra fetch. */
+let obLastAvailable = 0;
+let obLastCashOutStatus = '';
+
 async function obRefreshDashboard(){
   const session = obGetSession();
   if(!session) return;
@@ -692,6 +752,14 @@ async function obRefreshDashboard(){
       if(s){ s.photoUrl=data.photoUrl; obSaveSession(s); }
     }
 
+    // NEW: apply configurable labels from the Settings sheet
+    obApplySettings(data.settings);
+
+    // NEW: track balance + cash-out status, then update the button state
+    obLastAvailable = Number(data.available) || 0;
+    obLastCashOutStatus = data.cashOutStatus || '';
+    obUpdateCashOutButton();
+
   }catch(e){
     console.error('Dashboard load failed', e);
   }
@@ -710,6 +778,60 @@ function obCopyRefLink(){
   const original = btn.textContent;
   btn.textContent='Copied!'; btn.classList.add('copied');
   setTimeout(()=>{ btn.textContent=original; btn.classList.remove('copied'); },1500);
+}
+
+/* =====================================================
+   CASH OUT (NEW)
+   ===================================================== */
+
+// Reflects the current balance/status onto the button — called after every
+// dashboard refresh so the button state never goes stale.
+function obUpdateCashOutButton(){
+  const btn = $('ob-cashout-btn');
+  const statusEl = $('ob-cashout-status');
+  if(!btn) return;
+
+  if(obLastCashOutStatus === 'Requested'){
+    btn.disabled = true;
+    statusEl.textContent = '⏳ Cash-out request pending approval';
+    statusEl.classList.add('pending');
+  } else if(obLastAvailable <= 0){
+    btn.disabled = true;
+    statusEl.textContent = 'No available balance to cash out yet';
+    statusEl.classList.remove('pending');
+  } else {
+    btn.disabled = false;
+    statusEl.textContent = '';
+    statusEl.classList.remove('pending');
+  }
+}
+
+async function obRequestCashOut(){
+  const session = obGetSession();
+  if(!session) return;
+
+  const btn = $('ob-cashout-btn');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="ob-spinner"></span> Sending request...';
+
+  try{
+    const res = await fetch(OB_API_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action:'requestCashOut', email: session.email, token: session.token })
+    });
+    const data = await res.json();
+    if(!data.ok){ throw new Error(data.message || 'Could not send cash-out request.'); }
+
+    obToast('✅ Cash-out request sent!');
+    obLastCashOutStatus = 'Requested';
+    obUpdateCashOutButton();
+
+  }catch(e){
+    obToast('❌ ' + (e.message || 'Cash-out request failed.'));
+    btn.innerHTML = originalHTML;
+    obUpdateCashOutButton(); // restore correct enabled/disabled state
+  }
 }
 
 /* =====================================================
