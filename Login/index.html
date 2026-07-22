@@ -187,6 +187,51 @@ body{
 }
 .ob-cashout-status.pending{color:var(--ob-accent4-text);font-weight:700;}
 
+/* ---------- CASH OUT MODAL (NEW) ---------- */
+.ob-modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(20,20,43,0.45);
+  z-index:100;align-items:flex-end;justify-content:center;
+}
+.ob-modal-overlay.show{display:flex;}
+.ob-modal-card{
+  width:100%;max-width:480px;background:var(--ob-card);
+  border-radius:20px 20px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));
+  box-shadow:0 -4px 24px rgba(20,20,43,0.18);
+  animation:obModalUp .18s ease-out;
+}
+@media (min-width:520px){
+  .ob-modal-overlay{align-items:center;}
+  .ob-modal-card{border-radius:var(--ob-radius);}
+}
+@keyframes obModalUp{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.ob-modal-title{font-size:17px;font-weight:800;margin-bottom:4px;}
+.ob-modal-sub{font-size:13px;color:var(--ob-sub);margin-bottom:18px;}
+.ob-modal-field{margin-bottom:14px;}
+.ob-modal-field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
+.ob-modal-field input{
+  width:100%;padding:12px 14px;border-radius:10px;
+  border:1.5px solid var(--ob-border);font-size:15px;
+  background:#fbfcfe;color:var(--ob-text);outline:none;
+  transition:border-color .15s,background .15s;
+}
+.ob-modal-field input:focus{border-color:var(--ob-primary);background:#fff;}
+.ob-modal-field input.ob-input-error{
+  border-color:var(--ob-danger-text);background:var(--ob-danger-bg);color:var(--ob-danger-text);
+}
+.ob-modal-hint{font-size:12px;color:var(--ob-sub);margin-top:6px;}
+.ob-modal-hint.ob-hint-error{color:var(--ob-danger-text);font-weight:600;}
+.ob-modal-actions{display:flex;gap:10px;margin-top:20px;}
+.ob-modal-actions .ob-btn-secondary{
+  flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--ob-border);
+  background:#fff;color:var(--ob-text);font-weight:700;font-size:14.5px;cursor:pointer;
+}
+.ob-modal-actions .ob-btn-primary{
+  flex:1;padding:12px;border-radius:10px;border:none;
+  background:var(--ob-primary);color:#fff;font-weight:700;font-size:14.5px;cursor:pointer;
+}
+.ob-modal-actions .ob-btn-primary:disabled{background:#d1d5db;color:#9ca3af;cursor:default;}
+.ob-modal-actions .ob-btn-primary:not(:disabled):hover{background:var(--ob-primary-dark);}
+
 .ob-section{
   background:var(--ob-card);border-radius:var(--ob-radius);
   border:1px solid var(--ob-border);box-shadow:var(--ob-shadow);
@@ -368,10 +413,34 @@ body{
       </div>
 
       <!-- ============ CASH OUT (NEW) ============ -->
-      <button class="ob-cashout-btn" id="ob-cashout-btn" onclick="obRequestCashOut()">
+      <button class="ob-cashout-btn" id="ob-cashout-btn" onclick="obOpenCashOutModal()">
         💸 <span id="ob-label-cashout">Cash Out</span>
       </button>
       <div class="ob-cashout-status" id="ob-cashout-status"></div>
+
+      <!-- ============ CASH OUT MODAL (NEW) ============ -->
+      <div class="ob-modal-overlay" id="ob-cashout-modal">
+        <div class="ob-modal-card">
+          <div class="ob-modal-title">Request Cash Out</div>
+          <div class="ob-modal-sub">Based on your Total Earned balance.</div>
+
+          <div class="ob-modal-field">
+            <label for="ob-co-name">Name</label>
+            <input type="text" id="ob-co-name" placeholder="Your name">
+          </div>
+
+          <div class="ob-modal-field">
+            <label for="ob-co-amount">Amount to cash out (₱)</label>
+            <input type="number" id="ob-co-amount" placeholder="0.00" min="0" step="0.01" oninput="obValidateCashOutAmount()">
+            <div class="ob-modal-hint" id="ob-co-hint">Total Earned: ₱0.00</div>
+          </div>
+
+          <div class="ob-modal-actions">
+            <button class="ob-btn-secondary" onclick="obCloseCashOutModal()">Cancel</button>
+            <button class="ob-btn-primary" id="ob-co-submit" disabled onclick="obSubmitCashOut()">Send Request</button>
+          </div>
+        </div>
+      </div>
 
       <div class="ob-section">
         <h3>Your Referral Link</h3>
@@ -705,10 +774,12 @@ function obStopAutoRefresh(){
   if(obAutoRefreshTimer){ clearInterval(obAutoRefreshTimer); obAutoRefreshTimer=null; }
 }
 
-/* Keeps the last known available balance + cash-out status in module scope
-   so obRequestCashOut() can check them without an extra fetch. */
+/* Keeps the last known balance + cash-out status in module scope so the
+   modal can validate without an extra fetch. */
 let obLastAvailable = 0;
+let obLastTotal = 0;
 let obLastCashOutStatus = '';
+let obLastRequestedAmount = 0;
 
 async function obRefreshDashboard(){
   const session = obGetSession();
@@ -766,7 +837,9 @@ async function obRefreshDashboard(){
 
     // NEW: track balance + cash-out status, then update the button state
     obLastAvailable = Number(data.available) || 0;
+    obLastTotal = Number(data.total) || 0;
     obLastCashOutStatus = data.cashOutStatus || '';
+    obLastRequestedAmount = Number(data.requestedAmount) || 0;
     obUpdateCashOutButton();
 
   }catch(e){
@@ -805,11 +878,11 @@ function obUpdateCashOutButton(){
 
   if(obLastCashOutStatus === 'Requested'){
     btn.disabled = true;
-    statusEl.textContent = '⏳ Cash-out request pending approval';
+    statusEl.textContent = `⏳ Cash-out request for ${obPeso(obLastRequestedAmount)} pending approval`;
     statusEl.classList.add('pending');
-  } else if(obLastAvailable <= 0){
+  } else if(obLastTotal <= 0){
     btn.disabled = true;
-    statusEl.textContent = 'No available balance to cash out yet';
+    statusEl.textContent = 'No earnings yet to cash out';
     statusEl.classList.remove('pending');
   } else {
     btn.disabled = false;
@@ -818,31 +891,94 @@ function obUpdateCashOutButton(){
   }
 }
 
-async function obRequestCashOut(){
+/* ---------- Cash-out modal ---------- */
+function obOpenCashOutModal(){
   const session = obGetSession();
   if(!session) return;
 
-  const btn = $('ob-cashout-btn');
-  const originalHTML = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="ob-spinner"></span> Sending request...';
+  $('ob-co-name').value = session.name || '';
+  $('ob-co-amount').value = '';
+  $('ob-co-amount').classList.remove('ob-input-error');
+  $('ob-co-hint').textContent = `Total Earned: ${obPeso(obLastTotal)}`;
+  $('ob-co-hint').classList.remove('ob-hint-error');
+  $('ob-co-submit').disabled = true;
+
+  $('ob-cashout-modal').classList.add('show');
+}
+
+function obCloseCashOutModal(){
+  $('ob-cashout-modal').classList.remove('show');
+}
+
+// Amount must be a positive number and cannot exceed Total Earned — turns
+// the field red and disables Send Request when it does.
+function obValidateCashOutAmount(){
+  const input = $('ob-co-amount');
+  const hint  = $('ob-co-hint');
+  const submit = $('ob-co-submit');
+  const amount = Number(input.value);
+
+  const invalid = !input.value || isNaN(amount) || amount <= 0;
+  const insufficient = !invalid && amount > obLastTotal;
+
+  if(insufficient){
+    input.classList.add('ob-input-error');
+    hint.textContent = `Amount exceeds your Total Earned (${obPeso(obLastTotal)})`;
+    hint.classList.add('ob-hint-error');
+    submit.disabled = true;
+  } else if(invalid){
+    input.classList.remove('ob-input-error');
+    hint.textContent = `Total Earned: ${obPeso(obLastTotal)}`;
+    hint.classList.remove('ob-hint-error');
+    submit.disabled = true;
+  } else {
+    input.classList.remove('ob-input-error');
+    hint.textContent = `Total Earned: ${obPeso(obLastTotal)}`;
+    hint.classList.remove('ob-hint-error');
+    submit.disabled = false;
+  }
+}
+
+async function obSubmitCashOut(){
+  const session = obGetSession();
+  if(!session) return;
+
+  const name   = $('ob-co-name').value.trim();
+  const amount = Number($('ob-co-amount').value);
+
+  if(!name){ obToast('❌ Please enter your name.'); return; }
+  if(!amount || amount <= 0 || amount > obLastTotal){ obValidateCashOutAmount(); return; }
+
+  const submit = $('ob-co-submit');
+  const originalHTML = submit.innerHTML;
+  submit.disabled = true;
+  submit.innerHTML = '<span class="ob-spinner"></span> Sending...';
 
   try{
     const res = await fetch(OB_API_URL, {
       method: 'POST',
-      body: JSON.stringify({ action:'requestCashOut', email: session.email, token: session.token })
+      body: JSON.stringify({
+        action: 'requestCashOut',
+        email:  session.email,
+        token:  session.token,
+        name:   name,
+        amount: amount
+      })
     });
     const data = await res.json();
     if(!data.ok){ throw new Error(data.message || 'Could not send cash-out request.'); }
 
     obToast('✅ Cash-out request sent!');
     obLastCashOutStatus = 'Requested';
+    obLastRequestedAmount = amount;
     obUpdateCashOutButton();
+    obCloseCashOutModal();
 
   }catch(e){
     obToast('❌ ' + (e.message || 'Cash-out request failed.'));
-    btn.innerHTML = originalHTML;
-    obUpdateCashOutButton(); // restore correct enabled/disabled state
+  }finally{
+    submit.innerHTML = originalHTML;
+    submit.disabled = false;
   }
 }
 
