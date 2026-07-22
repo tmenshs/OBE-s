@@ -350,7 +350,7 @@ body{
       <div class="ob-section">
         <h3>Your Referral Link</h3>
         <div class="ob-reflink-box">
-          <input type="text" id="ob-ref-link" readonly value="https://obearnings.com/?ref=">
+          <input type="text" id="ob-ref-link" readonly value="https://tmenshs.github.io/OBEs/Login/?ref=">
           <button class="ob-copy-btn" id="ob-copy-btn" onclick="obCopyRefLink()">Copy</button>
         </div>
       </div>
@@ -436,12 +436,16 @@ body{
      { ok:true, available, incentives, total, paid,
        refCode, refs, active, orders, status, photoUrl, phone }
 
+   Referral base URL: https://tmenshs.github.io/OBEs/Login/
+   (matches the live GitHub Pages site — update here if the domain changes)
+
    Cloudinary config — update CLOUDINARY_CLOUD and CLOUDINARY_PRESET:
    - Cloud name:  gzkinasn
    - Upload preset: must be an UNSIGNED preset (create in Cloudinary settings)
    ===================================================== */
 
 const OB_API_URL       = 'https://script.google.com/macros/s/AKfycbwIi-EUKPYifo9x4qLZPqNX2xaeR8cK0P0DcunXZA3U1osRujTFiJahdNag6TrkjLA/exec';
+const OB_REFERRAL_BASE = 'https://tmenshs.github.io/OBEs/Login/';
 const CLOUDINARY_CLOUD  = 'gzkinasn';
 const CLOUDINARY_PRESET = 'obe_unsigned'; // ← your unsigned preset name
 
@@ -672,7 +676,7 @@ async function obRefreshDashboard(){
     $('ob-p-refcode').textContent      = data.refCode || '—';
     $('ob-p-status').textContent       = data.status  || '—';
 
-    $('ob-ref-link').value = `https://obearnings.com/?ref=${data.refCode}`;
+    $('ob-ref-link').value = `${OB_REFERRAL_BASE}?ref=${data.refCode}`;
 
     if(data.phone){
       $('ob-p-phone').textContent = data.phone;
@@ -738,7 +742,7 @@ $('ob-photo-input').addEventListener('change', async function(){
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', CLOUDINARY_PRESET);
-    formData.append('folder', 'loginobeuserprofile');
+    formData.append('folder', 'obe_unsigned');
 
     const cdnRes  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
       method: 'POST',
