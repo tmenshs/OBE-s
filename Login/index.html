@@ -326,6 +326,12 @@ body{
 <body>
   
 <div class="ob-app">
+<!-- GLOBAL TOP BAR -->
+  <div style="background:#fff;border-bottom:1px solid #edf0f4;padding:8px 16px;border-radius:16px 16px;text-align:center;position:sticky;top:0;z-index:30;box-shadow:0 1px 6px rgba(20,20,43,0.04);">
+    <a href="https://tmenshs.github.io/OBEs/" style="color:#0f7d38;font-size:13.5px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+      Back to Shop
+    </a>
+  </div>
 
   <input type="file" id="ob-photo-input" accept="image/*">
   <div class="ob-toast" id="ob-toast"></div>
@@ -334,7 +340,7 @@ body{
   <div id="ob-login-screen" class="ob-screen show">
     <div class="ob-auth-wrap">
       <div class="ob-auth-card">
-        <div class="ob-auth-logo">OBE</div>
+       <div class="ob-auth-logo"><img src="https://i.ibb.co/PGwr7p7b/png.png" alt="OBE's" style="height:60px;width:auto;"></div>
         <div class="ob-auth-sub">Sign in to your account</div>
 
         <div id="ob-login-error" class="ob-error-box">Wrong email or password.</div>
@@ -364,7 +370,7 @@ body{
   <div id="ob-signup-screen" class="ob-screen">
     <div class="ob-auth-wrap">
       <div class="ob-auth-card">
-        <div class="ob-auth-logo">OBE</div>
+        <div class="ob-auth-logo"><img src="https://i.ibb.co/PGwr7p7b/png.png" alt="OBE's" style="height:60px;width:auto;"></div>
         <div class="ob-auth-sub">Create your account</div>
 
         <div id="ob-signup-error" class="ob-error-box">Something went wrong.</div>
@@ -405,7 +411,7 @@ body{
   <!-- ============ DASHBOARD SCREEN ============ -->
   <div id="ob-dashboard-screen" class="ob-screen">
     <div class="ob-topbar">
-      <div class="ob-brand">OBE</div>
+     <div class="ob-brand"><img src="https://i.ibb.co/PGwr7p7b/png.png" alt="OBE's" style="height:28px;width:auto;display:block;"></div>
       <div class="ob-dropdown-wrap">
         <div class="ob-avatar" id="ob-avatar" onclick="obToggleDropdown('ob-dropdown')">J</div>
         <div class="ob-dropdown" id="ob-dropdown">
@@ -450,7 +456,7 @@ body{
 
       <!-- CASH OUT -->
       <button class="ob-cashout-btn" id="ob-cashout-btn" onclick="obOpenCashOutModal()">
-         <span id="ob-label-cashout">Cash Out</span>
+        💸 <span id="ob-label-cashout">Cash Out</span>
       </button>
       <div class="ob-cashout-status" id="ob-cashout-status"></div>
 
@@ -703,6 +709,8 @@ function obClearSession(){
 }
 
 function obLogout(){
+  const gb = document.getElementById('ob-global-bar');
+  if(gb) gb.style.display = '';
   obStopAutoRefresh();
   obClearSession();
   $('ob-login-email').value='';
@@ -754,6 +762,8 @@ function obApplySettings(settings){
 
 /* ---------- DASHBOARD ---------- */
 function obOpenDashboard(session){
+  const gb = document.getElementById('ob-global-bar');
+  if(gb) gb.style.display = 'none';
   $('ob-dash-name').textContent = session.name || session.email;
   $('ob-p-name').textContent    = session.name  || '—';
   $('ob-p-phone').textContent   = session.phone || '—';
