@@ -327,11 +327,9 @@ body{
   
 <div class="ob-app">
 <!-- GLOBAL TOP BAR -->
-  <div style="background:#fff;border-bottom:1px solid #edf0f4;padding:8px 16px;border-radius:16px 16px;text-align:center;position:sticky;top:0;z-index:30;box-shadow:0 1px 6px rgba(20,20,43,0.04);">
-    <a href="https://tmenshs.github.io/OBEs/" style="color:#0f7d38;font-size:13.5px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
-      Back to Shop
-    </a>
-  </div>
+  <a id="ob-global-bar" href="https://tmenshs.github.io/OBEs/" target="_blank" style="display:block;background:#fff;border-bottom:1px solid #edf0f4;padding:8px 16px;border-radius:16px;text-align:center;position:sticky;top:0;z-index:30;box-shadow:0 1px 6px rgba(20,20,43,0.04);color:#0f7d38;font-size:13.5px;font-weight:700;text-decoration:none;">
+    Back to Shop
+  </a>
 
   <input type="file" id="ob-photo-input" accept="image/*">
   <div class="ob-toast" id="ob-toast"></div>
@@ -419,7 +417,7 @@ body{
             <div class="ob-dd-name" id="ob-dd-name">—</div>
             <div class="ob-dd-email" id="ob-dd-email">—</div>
           </div>
-          <a class="ob-dd-item-shop" href="https://tmenshs.github.io/OBEs/" target="_blank">🛍️ Go Back to Shop</a>
+          <a class="ob-dd-item-shop" href="https://tmenshs.github.io/OBEs/" target="_blank">Back to Shop</a>
           <div class="ob-dd-item" onclick="obOpenProfile()">👤 Profile</div>
           <div class="ob-dd-item" onclick="obLogout()">🚪 Logout</div>
         </div>
@@ -456,7 +454,7 @@ body{
 
       <!-- CASH OUT -->
       <button class="ob-cashout-btn" id="ob-cashout-btn" onclick="obOpenCashOutModal()">
-        💸 <span id="ob-label-cashout">Cash Out</span>
+        <span id="ob-label-cashout">Cash Out</span>
       </button>
       <div class="ob-cashout-status" id="ob-cashout-status"></div>
 
@@ -513,7 +511,7 @@ body{
             <div class="ob-dd-name" id="ob-dd-name-2">—</div>
             <div class="ob-dd-email" id="ob-dd-email-2">—</div>
           </div>
-          <a class="ob-dd-item-shop" href="https://tmenshs.github.io/OBEs/" target="_blank">🛍️ Go Back to Shop</a>
+          <a class="ob-dd-item-shop" href="https://tmenshs.github.io/OBEs/" target="_blank">Back to Shop</a>
           <div class="ob-dd-item" onclick="obLogout()">🚪 Logout</div>
         </div>
       </div>
